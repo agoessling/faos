@@ -1,2 +1,5 @@
 opt
+obj
 *.swp
+*.elf
+*.bin

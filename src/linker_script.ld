@@ -9,7 +9,7 @@ PHDRS {
 ENTRY(_startup)
 
 SECTIONS {
-  . = ORIGIN(a8ram)
+  . = ORIGIN(a8ram);
   .text ALIGN(4) : {
     *(.text._startup)
     *(.text)

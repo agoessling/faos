@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-void Main(void) [
+void Main(void) {
   while (true) {
   }
 }

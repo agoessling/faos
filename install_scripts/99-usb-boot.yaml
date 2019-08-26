@@ -1,0 +1,7 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s20u1:
+      dhcp4: no
+      addresses: [192.168.254.254/24]
