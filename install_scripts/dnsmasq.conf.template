@@ -13,7 +13,7 @@
 port=0
 
 # Only interact with RNDIS USB.
-interface=enp0s20u1
+interface=usb-boot
 
 # Enable TFTP service.
 enable-tftp

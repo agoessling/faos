@@ -44,7 +44,7 @@ clean:
 	rm -f ${APP}.elf ${APP}.bin
 
 .PHONY: usb_boot
-usb_boot:
+usb_boot: ${APP}.bin
 	sudo dnsmasq -d -C opt/dnsmasq/dnsmasq.conf
 
 print-%:

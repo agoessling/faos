@@ -74,6 +74,7 @@ uninstall_usb_boot() {
   echo Uninstalling USB BOOT.
   rm -rf "$ROOT_PATH/opt/dnsmasq"
   sudo rm -f /etc/netplan/99-usb-boot.yaml
+  sudo rm -f /etc/udev/rules.d/99-usb-boot.rules
   sudo netplan apply
 }
 
@@ -110,6 +111,11 @@ install_arm() {
 install_usb_boot() {
   echo Installing USB BOOT.
   sudo apt install -y dnsmasq
+
+  # Setup udev to name TI RNDIS device to usb-boot.
+  sudo cp "$ROOT_PATH/install_scripts/99-usb-boot.rules" /etc/udev/rules.d/
+  sudo udevadm control --reload-rules
+  sudo udevadm trigger
 
   # Setup dnsmasq configuration file.
   # Template variables.  Need to match locations in Makefile.

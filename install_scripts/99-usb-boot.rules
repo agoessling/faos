@@ -1,0 +1,1 @@
+SUBSYSTEM=="net", ACTION=="add", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="6141", NAME="usb-boot"
