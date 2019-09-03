@@ -1,0 +1,137 @@
+diff -aur /home/agoessling/Desktop/targetdb_orig/devices/AM3358.xml /home/agoessling/Desktop/targetdb_patched/devices/AM3358.xml
+--- /home/agoessling/Desktop/targetdb_orig/devices/AM3358.xml	2016-06-27 14:05:32.000000000 -0700
++++ /home/agoessling/Desktop/targetdb_patched/devices/AM3358.xml	2019-09-02 19:32:49.492495000 -0700
+@@ -78,8 +78,8 @@
+                          <instance href="../Modules/am335x/PRM_CEFUSE.xml" id="PRM_CEFUSE" xml="PRM_CEFUSE.xml" xmlpath="../Modules/am335x/" description="Power Reset Module Efuse Registers" baseaddr="0x44E01200" endaddr="0x44E012FF" size="0x100" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/DMTimer.xml" id="DMTIMER0" xml="DMTimer.xml" xmlpath="../Modules/am335x/" description="DMTimer0 Registers" baseaddr="0x44E05000" endaddr="0x44E05FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/GPIO.xml" id="GPIO0" xml="GPIO.xml" xmlpath="../Modules/am335x/" description="GPIO Registers" baseaddr="0x44E07000" endaddr="0x44E07FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/UART.xml" id="UART0" xml="UART.xml" xmlpath="../Modules/am335x/" description="UART0 Registers" baseaddr="0x44E09000" endaddr="0x44E07FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/I2C.xml" id="I2C0" xml="I2C.xml" xmlpath="../Modules/am335x/" description="I2C0 Registers" baseaddr="0x44E0B000" endaddr="0x44E07FFF" size="0x1000" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/UART.xml" id="UART0" xml="UART.xml" xmlpath="../Modules/am335x/" description="UART0 Registers" baseaddr="0x44E09000" endaddr="0x44E09FFF" size="0x1000" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/I2C.xml" id="I2C0" xml="I2C.xml" xmlpath="../Modules/am335x/" description="I2C0 Registers" baseaddr="0x44E0B000" endaddr="0x44E0BFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/tsc_adc_ss.xml" id="ADC_TSC" xml="tsc_adc_ss.xml" xmlpath="../Modules/am335x/" description="ADC_TSC Registers" baseaddr="0x44E0D000" endaddr="0x44E0EFFF" size="0x2000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/control_module.xml" id="Control_Module" xml="control_module.xml" xmlpath="../Modules/am335x/" description="Control Module Registers" baseaddr="0x44E10000" endaddr="0x44E11FFF" size="0x2000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/DDR2_3_PHY.xml" id="DDR2_3_PHY" xml="DDR2_3_PHY.xml" xmlpath="../Modules/am335x/" description="DDR2/3/mDDR PHY Registers" baseaddr="0x44E12000" endaddr="0x44E123FF" size="0x0400" accessnumbytes="4" permissions="p" />
+@@ -93,8 +93,8 @@
+                          <instance href="../Modules/am335x/USB2PHY.xml" id="USB1_PHY" xml="USB2PHY.xml" xmlpath="../Modules/am335x/" description="USB1 PHY Registers" baseaddr="0x47401B00" endaddr="0x47401BFF" size="0x0100" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/CPPI_DMA.xml" id="USB_CPPI_DMA_CTRL" xml="CPPI_DMA.xml" xmlpath="../Modules/am335x/" description="USB CPPI DMA Controller Registers" baseaddr="0x47402000" endaddr="0x47402FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/CPPI_DMA_Scheduler.xml" id="USB_CPPI_DMA_SCH" xml="CPPI_DMA_Scheduler.xml" xmlpath="../Modules/am335x/" description="USB CPPI DMA Scheduler Registers" baseaddr="0x47403000" endaddr="0x47403FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/Queue_MGR.xml" id="USB_Queue_MGR" xml="Queue_MGR.xml" xmlpath="../Modules/am335x/" description="USB Queue Manager Registers" baseaddr="0x47404000" endaddr="0x47404FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/MMC.xml" id="MMCHS2" xml="MMC.xml" xmlpath="../Modules/am335x/" description="MMCHS2" baseaddr="0x47810000" endaddr="0x4781FFFF" size="0x1000" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/Queue_MGR.xml" id="USB_Queue_MGR" xml="Queue_MGR.xml" xmlpath="../Modules/am335x/" description="USB Queue Manager Registers" baseaddr="0x47404000" endaddr="0x47407FFF" size="0x4000" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/MMC.xml" id="MMCHS2" xml="MMC.xml" xmlpath="../Modules/am335x/" description="MMCHS2" baseaddr="0x47810000" endaddr="0x4781FFFF" size="0x10000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/UART.xml" id="UART1" xml="UART.xml" xmlpath="../Modules/am335x/" description="UART1 Registers" baseaddr="0x48022000" endaddr="0x48022FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/UART.xml" id="UART2" xml="UART.xml" xmlpath="../Modules/am335x/" description="UART2 Registers" baseaddr="0x48024000" endaddr="0x48024FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/I2C.xml" id="I2C1" xml="I2C.xml" xmlpath="../Modules/am335x/" description="I2C1 Registers" baseaddr="0x4802A000" endaddr="0x4802AFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+@@ -109,7 +109,7 @@
+                          <instance href="../Modules/am335x/DMTimer.xml" id="DMTIMER7" xml="DMTimer.xml" xmlpath="../Modules/am335x/" description="DMTimer7 Registers" baseaddr="0x4804A000" endaddr="0x4804AFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/GPIO.xml" id="GPIO1" xml="GPIO.xml" xmlpath="../Modules/am335x/" description="GPIO1 Registers" baseaddr="0x4804C000" endaddr="0x4804CFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/MMC.xml" id="MMCHS0" xml="MMC.xml" xmlpath="../Modules/am335x/" description="MMCHS0 Registers" baseaddr="0x48060000" endaddr="0x48060FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/ELM.xml" id="ELM" xml="ELM.xml" xmlpath="../Modules/am335x/" description="ELM Registers" baseaddr="0x48080000" endaddr="0x4808FFFF" size="0x1000" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/ELM.xml" id="ELM" xml="ELM.xml" xmlpath="../Modules/am335x/" description="ELM Registers" baseaddr="0x48080000" endaddr="0x4808FFFF" size="0x10000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/MAILBOX.xml" id="MAILBOX0" xml="MAILBOX.xml" xmlpath="../Modules/am335x/" description="Mailbox Registers" baseaddr="0x480C8000" endaddr="0x480C8FFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/SPINLOCK.xml" id="Spinlock" xml="SPINLOCK.xml" xmlpath="../Modules/am335x/" description="Spinlock Registers" baseaddr="0x480CA000" endaddr="0x480CAFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/I2C.xml" id="I2C2" xml="I2C.xml" xmlpath="../Modules/am335x/" description="I2C2 Registers" baseaddr="0x4819C000" endaddr="0x4819CFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+@@ -126,15 +126,15 @@
+                          <instance href="../Modules/am335x/PWMSS.xml" id="PWMSS0" xml="PWMSS.xml" xmlpath="../Modules/am335x/" description="PWMSS0 Configuration Registers" baseaddr="0x48300000" endaddr="0x483000FF" size="0x0100" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/ecap.xml" id="eCAP0" xml="ecap.xml" xmlpath="../Modules/am335x/" description="PWMSS eCAP0 Registers" baseaddr="0x48300100" endaddr="0x4830017F" size="0x0080" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/eqep.xml" id="eQEP0" xml="eqep.xml" xmlpath="../Modules/am335x/" description="PWMSS eQEP0 Registers" baseaddr="0x48300180" endaddr="0x483001FF" size="0x0080" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/epwm.xml" id="ePWM0" xml="epwm.xml" xmlpath="../Modules/am335x/" description="PWMSS ePWM0 Registers" baseaddr="0x48300200" endaddr="0x4830025F" size="0x0060" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/epwm.xml" id="ePWM0" xml="epwm.xml" xmlpath="../Modules/am335x/" description="PWMSS ePWM0 Registers" baseaddr="0x48300200" endaddr="0x483002C3" size="0x00C4" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/PWMSS.xml" id="PWMSS1" xml="PWMSS.xml" xmlpath="../Modules/am335x/" description="PWMSS1 Configuration Registers" baseaddr="0x48302000" endaddr="0x483020FF" size="0x0100" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/ecap.xml" id="eCAP1" xml="ecap.xml" xmlpath="../Modules/am335x/" description="PWMSS eCAP1 Registers" baseaddr="0x48302100" endaddr="0x4830217F" size="0x0080" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/eqep.xml" id="eQEP1" xml="eqep.xml" xmlpath="../Modules/am335x/" description="PWMSS eQEP1 Registers" baseaddr="0x48302180" endaddr="0x483021FF" size="0x0080" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/epwm.xml" id="ePWM1" xml="epwm.xml" xmlpath="../Modules/am335x/" description="PWMSS ePWM1 Registers" baseaddr="0x48302200" endaddr="0x4830225F" size="0x0060" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/epwm.xml" id="ePWM1" xml="epwm.xml" xmlpath="../Modules/am335x/" description="PWMSS ePWM1 Registers" baseaddr="0x48302200" endaddr="0x483022C3" size="0x00C4" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/PWMSS.xml" id="PWMSS2" xml="PWMSS.xml" xmlpath="../Modules/am335x/" description="PWMSS2 Configuration Registers" baseaddr="0x48304000" endaddr="0x483040FF" size="0x0100" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/ecap.xml" id="eCAP2" xml="ecap.xml" xmlpath="../Modules/am335x/" description="PWMSS eCAP2 Registers" baseaddr="0x48304100" endaddr="0x4830417F" size="0x0080" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/eqep.xml" id="eQEP2" xml="eqep.xml" xmlpath="../Modules/am335x/" description="PWMSS eQEP2 Registers" baseaddr="0x48304180" endaddr="0x483041FF" size="0x0080" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/epwm.xml" id="ePWM2" xml="epwm.xml" xmlpath="../Modules/am335x/" description="PWMSS ePWM2 Registers" baseaddr="0x48304200" endaddr="0x4830425F" size="0x0060" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/epwm.xml" id="ePWM2" xml="epwm.xml" xmlpath="../Modules/am335x/" description="PWMSS ePWM2 Registers" baseaddr="0x48304200" endaddr="0x483042C3" size="0x00C4" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/LCD.xml" id="LCD_Controller" xml="LCD.xml" xmlpath="../Modules/am335x/" description="LCD Registers" baseaddr="0x4830E000" endaddr="0x4830EFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/EDMA3CC.xml" id="EDMA3CC" xml="EDMA3CC.xml" xmlpath="../Modules/am335x/" description="EDMA3 Channel Controller Registers" baseaddr="0x49000000" endaddr="0x490FFFFF" size="0x100000" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/EDMA3TC.xml" id="EDMA3TC0" xml="EDMA3TC.xml" xmlpath="../Modules/am335x/" description="EDMA3 Transfer Controller 0 Registers" baseaddr="0x49800000" endaddr="0x498FFFFF" size="0x100000" accessnumbytes="4" permissions="p" />
+@@ -152,7 +152,7 @@
+                          <instance href="../Modules/am335x/MDIO.xml" id="MDIO" xml="MDIO.xml" xmlpath="../Modules/am335x/" description="Ethernet MDIO Controller" baseaddr="0x4A101000" endaddr="0x4A1010FF" size="0x0100" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/cpsw_wr.xml" id="CPSW_WR" xml="cpsw_wr.xml" xmlpath="../Modules/am335x/" description="Ethernet Subsystem for RMII/GMII" baseaddr="0x4A101200" endaddr="0x4A101FFF" size="0x0E00" accessnumbytes="4" permissions="p" />
+                          <instance href="../Modules/am335x/emif4.xml" id="EMIF0" xml="emif4.xml" xmlpath="../Modules/am335x/" description="EMIF0 Configuration Registers" baseaddr="0x4C000000" endaddr="0x4C00012F" size="0x0130" accessnumbytes="4" permissions="p" />
+-                         <instance href="../Modules/am335x/GPMC.xml" id="GPMC" xml="GPMC.xml" xmlpath="../Modules/am335x/" description="GPMC Configuration Registers" baseaddr="0x50000000" endaddr="0x5000012F" size="0x0130" accessnumbytes="4" permissions="p" />
++                         <instance href="../Modules/am335x/GPMC.xml" id="GPMC" xml="GPMC.xml" xmlpath="../Modules/am335x/" description="GPMC Configuration Registers" baseaddr="0x50000000" endaddr="0x5000037B" size="0x037C" accessnumbytes="4" permissions="p" />
+ <!--
+                          <instance href="../Modules/am335x/SGX530.xml" id="SGX530" xml="SGX530.xml" xmlpath="../Modules/am335x/" description="SGX530 Slave Port" baseaddr="0x56000000" endaddr="0x56FFFFFF" size="0x1000" accessnumbytes="4" permissions="p" />
+ -->
+Only in /home/agoessling/Desktop/targetdb_orig/devices: .AM3358.xml.swp
+diff -aur /home/agoessling/Desktop/targetdb_orig/Modules/am335x/ELM.xml /home/agoessling/Desktop/targetdb_patched/Modules/am335x/ELM.xml
+--- /home/agoessling/Desktop/targetdb_orig/Modules/am335x/ELM.xml	2012-11-20 10:43:44.000000000 -0800
++++ /home/agoessling/Desktop/targetdb_patched/Modules/am335x/ELM.xml	2019-09-02 20:09:07.641179000 -0700
+@@ -1034,7 +1034,7 @@
+   </register>
+   
+   
+-  <register acronym="ELM_LOCATION_STATUS_3" description="" id="ELM_LOCATION_STATUS_3" offset="0xC00" width="32">
++  <register acronym="ELM_LOCATION_STATUS_3" description="" id="ELM_LOCATION_STATUS_3" offset="0xB00" width="32">
+     
+   <bitfield begin="31" description="" end="9" id="Reserved1" rwaccess="R" width="23"></bitfield>
+     
+@@ -1302,7 +1302,7 @@
+   </register>
+   
+   
+-  <register acronym="ELM_LOCATION_STATUS_4" description="" id="ELM_LOCATION_STATUS_4" offset="0xE00" width="32">
++  <register acronym="ELM_LOCATION_STATUS_4" description="" id="ELM_LOCATION_STATUS_4" offset="0xC00" width="32">
+     
+   <bitfield begin="31" description="" end="9" id="Reserved1" rwaccess="R" width="23"></bitfield>
+     
+@@ -1570,7 +1570,7 @@
+   </register>
+   
+   
+-  <register acronym="ELM_LOCATION_STATUS_5" description="" id="ELM_LOCATION_STATUS_5" offset="0x1000" width="32">
++  <register acronym="ELM_LOCATION_STATUS_5" description="" id="ELM_LOCATION_STATUS_5" offset="0xD00" width="32">
+     
+   <bitfield begin="31" description="" end="9" id="Reserved1" rwaccess="R" width="23"></bitfield>
+     
+@@ -1582,7 +1582,7 @@
+   </register>
+   
+   
+-  <register acronym="ELM_LOCATION_STATUS_6" description="" id="ELM_LOCATION_STATUS_6" offset="0x1200" width="32">
++  <register acronym="ELM_LOCATION_STATUS_6" description="" id="ELM_LOCATION_STATUS_6" offset="0xE00" width="32">
+     
+   <bitfield begin="31" description="" end="9" id="Reserved1" rwaccess="R" width="23"></bitfield>
+     
+@@ -1594,7 +1594,7 @@
+   </register>
+   
+   
+-  <register acronym="ELM_LOCATION_STATUS_7" description="" id="ELM_LOCATION_STATUS_7" offset="0x1400" width="32">
++  <register acronym="ELM_LOCATION_STATUS_7" description="" id="ELM_LOCATION_STATUS_7" offset="0xF00" width="32">
+     
+   <bitfield begin="31" description="" end="9" id="Reserved1" rwaccess="R" width="23"></bitfield>
+     
+diff -aur /home/agoessling/Desktop/targetdb_orig/Modules/am335x/GPMC.xml /home/agoessling/Desktop/targetdb_patched/Modules/am335x/GPMC.xml
+--- /home/agoessling/Desktop/targetdb_orig/Modules/am335x/GPMC.xml	2012-11-20 10:43:46.000000000 -0800
++++ /home/agoessling/Desktop/targetdb_patched/Modules/am335x/GPMC.xml	2019-09-02 20:03:13.749752000 -0700
+@@ -2394,4 +2394,22 @@
+     
+   <bitfield begin="31" description="BCH ECC result, bits 192 to 207" end="0" id="BCH_RESULT6_6" rwaccess="RW" width="32"></bitfield>
+   </register>
++  
++  
++  <register acronym="GPMC_BCH_RESULT4_7" description="" id="GPMC_BCH_RESULT4_7" offset="0x370" width="32">
++    
++  <bitfield begin="31" description="BCH ECC result, bits 128 to 159" end="0" id="BCH_RESULT4_7" rwaccess="RW" width="32"></bitfield>
++  </register>
++  
++  
++  <register acronym="GPMC_BCH_RESULT5_7" description="" id="GPMC_BCH_RESULT5_7" offset="0x374" width="32">
++    
++  <bitfield begin="31" description="BCH ECC result, bits 160 to 191" end="0" id="BCH_RESULT5_7" rwaccess="RW" width="32"></bitfield>
++  </register>
++  
++  
++  <register acronym="GPMC_BCH_RESULT6_7" description="" id="GPMC_BCH_RESULT6_7" offset="0x378" width="32">
++    
++  <bitfield begin="31" description="BCH ECC result, bits 192 to 207" end="0" id="BCH_RESULT6_7" rwaccess="RW" width="32"></bitfield>
++  </register>
+ </module>

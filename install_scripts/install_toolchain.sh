@@ -93,6 +93,8 @@ install_ccs() {
     wget https://software-dl.ti.com/ccs/esd/CCSv9/CCS_9_1_0/exports/CCS9.1.0.00010_linux-x64.tar.gz
     tar -xzf CCS9.1.0.00010_linux-x64.tar.gz
     CCS9.1.0.00010_linux-x64/ccs_setup_linux64_9.1.0.00010.bin --prefix "$ROOT_PATH/opt/ccs/"
+
+    patch -f -F 0 -p 5 -d "$ROOT_PATH/opt/ccs/ccs/ccs_base/common/targetdb" < "$ROOT_PATH/install_scripts/targetdb.patch"
   fi
   sudo "$ROOT_PATH/opt/ccs/ccs/install_scripts/install_drivers.sh"
 }
