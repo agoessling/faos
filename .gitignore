@@ -3,3 +3,4 @@ obj
 *.swp
 *.elf
 *.bin
+src/autogen
