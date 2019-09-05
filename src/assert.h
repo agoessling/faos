@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-void assert(bool truth) {
+static inline void assert(bool truth) {
   while(!truth) {}
 }
 
