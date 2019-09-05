@@ -2,14 +2,28 @@
 
 import argparse
 import os
+import re
 import xml.etree.ElementTree as ET
+
+def get_basename(name):
+  match = re.match(r'(\w+?)\d+$', name)
+  if match:
+    return match.group(1)
+  else:
+    return name
+
+def strip_parent_name(name, parent_name):
+  basename = get_basename(parent_name)
+  prefix = [parent_name + '_', parent_name, basename + '_', basename]
+  for p in prefix:
+    if name.startswith(p) and len(p) < len(name):
+      return name[len(p):]
+  return name
 
 class Bitfield:
   @classmethod
   def from_xml(cls, elem, parent):
-    name = elem.get('id').upper()
-    if name.startswith(parent.name + '_'):
-      name = name[len(parent.name) + 1:]
+    name = strip_parent_name(elem.get('id').upper(), parent.name)
     if name[0].isdigit():
       name = 'd' + name
     return cls(
@@ -36,12 +50,8 @@ class Register:
   def __init__(self, elem, parent):
     self.parent = parent
 
-    self.type_name = elem.get('acronym').upper()
-    if self.type_name.startswith(parent.name + '_'):
-      self.name = self.type_name[len(parent.name) + 1:]
-    else:
-      self.name = self.type_name
-      self.type_name = parent.name + '_' + self.type_name
+    self.name = strip_parent_name(elem.get('acronym').upper(), parent.name)
+    self.type_name = parent.name + '_' + self.name
 
     self.offset = int(elem.get('offset'), 16)
     self.width = int(elem.get('width'))
@@ -88,11 +98,12 @@ class Register:
   def to_file(self):
     s = ''
     s += 'typedef union {\n'
-    s += '  struct {\n'
-    for bit in self.bitfields:
-      s += '    uint{:d}_t {:s} : {:d};  // Bits {:d}:{:d}.\n'.format(
-          self.width, bit.name, bit.width, bit.end, bit.start)
-    s += '  };\n'
+    if self.bitfields:
+      s += '  struct {\n'
+      for bit in self.bitfields:
+        s += '    uint{:d}_t {:s} : {:d};  // Bits {:d}:{:d}.\n'.format(
+            self.width, bit.name, bit.width, bit.end, bit.start)
+      s += '  };\n'
     s += '  uint{:d}_t raw;\n'.format(self.width)
     s += '}} Register{:s};\n'.format(self.type_name)
     s += '\n'
