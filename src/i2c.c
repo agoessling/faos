@@ -13,6 +13,7 @@ void I2cInit(I2c i2c_num) {
 
   CM_WKUP.I2C0_CLKCTRL.MODULEMODE = 2;  // Turn on module.
   I2C0.SYSC.SRST = 1; // Reset peripheral.
+  while (!I2C0.SYSS.RDONE) {}  // Wait for reset.
 
   float input_freq = ClockGet192Mhz() / 4.0f;
   int32_t prescale = (int32_t)(input_freq / kIClkFreq + 0.5f);  // Round.
@@ -34,4 +35,6 @@ void I2cInit(I2c i2c_num) {
     high_cycles = 5;
   }
   I2C0.SCLH.SCLH = (uint32_t)(high_cycles - 5);
+
+  I2C0.CON.I2C_EN = 1;
 }
