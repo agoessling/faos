@@ -23,9 +23,9 @@ OBJCOPY = ${TOOLCHAIN_PATH}/arm-eabi-objcopy
 
 TARGETFLAGS = -mcpu=cortex-a8
 
-ASFLAGS = ${TARGETFLAGS} -Wall -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -g
-CFLAGS = ${TARGETFLAGS} -Wall -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -g
-LDFLAGS = ${TARGETFLAGS} -Wall -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -nostartfiles -g
+ASFLAGS = ${TARGETFLAGS} -Wall -Wextra -Wsign-conversion -Wfloat-conversion -Wmissing-prototypes -Wstrict-prototypes -g
+CFLAGS = ${TARGETFLAGS} -Wall -Wextra -Wsign-conversion -Wfloat-conversion -Wmissing-prototypes -Wstrict-prototypes -g
+LDFLAGS = ${TARGETFLAGS} -Wall -Wextra -Wsign-conversion -Wfloat-conversion -Wmissing-prototypes -Wstrict-prototypes -nostartfiles -g
 
 .PHONY: all
 all: ${APP}.elf ${APP}.bin

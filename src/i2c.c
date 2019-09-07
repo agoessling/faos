@@ -47,8 +47,7 @@ static void I2cCleanup(volatile PeripheralI2C0 *i2c) {
   i2c->CON.STP = 1;  // Generate stop.
 
   // Clear status flags.
-  RegisterI2C0_IRQSTATUS irqstatus;
-  irqstatus.raw = 0;
+  RegisterI2C0_IRQSTATUS irqstatus = {0};
   irqstatus.XRDY = 1;
   irqstatus.RRDY = 1;
   irqstatus.ARDY = 1;
@@ -69,8 +68,7 @@ I2cStatus I2cWriteBlocking(I2c i2c_num, uint8_t address, const uint8_t *buf, int
   I2C0.CNT.DCOUNT = (uint32_t)len;
 
   // CON must be written atomically so that start and stop request are written at the same time.
-  RegisterI2C0_CON con;
-  con.raw  = 0;
+  RegisterI2C0_CON con = {0};
   con.I2C_EN = 1;
   con.MST = 1;  // Master mode.
   con.TRX = 1;  // Transmit.
@@ -118,8 +116,7 @@ I2cStatus I2cReadBlocking(I2c i2c_num, uint8_t address, uint8_t *buf, int32_t le
   I2C0.CNT.DCOUNT = (uint32_t)len;
 
   // CON must be written atomically so that start and stop request are written at the same time.
-  RegisterI2C0_CON con;
-  con.raw = 0;
+  RegisterI2C0_CON con = {0};
   con.I2C_EN = 1;
   con.MST = 1;  // Master mode.
   con.STP = stop_bit;

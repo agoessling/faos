@@ -4,6 +4,7 @@
 
 #include "autogen/reg_def.h"
 #include "i2c.h"
+#include "tps65217.h"
 
 static void BoardInit(void) {
   CONTROL_MODULE.CONF_I2C0_SDA.RXACTIVE = 1;
@@ -16,10 +17,7 @@ void Main(void) {
   BoardInit();
   I2cInit(kI2c0);
 
-  uint8_t reg_addr = 0x00;
-  I2cStatus write_status = I2cWriteBlocking(kI2c0, 0x25, &reg_addr, 1, false);
-  uint8_t response;
-  I2cStatus read_status = I2cReadBlocking(kI2c0, 0x24, &response, 1, true);
+  Tps65217Status status = Tps65217ScaleDcdc(kI2c0, kTps65217Dcdc2, kTps65217DcdcVoltageScale1v325);
 
   while (true) {}
 }
