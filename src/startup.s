@@ -52,8 +52,17 @@
 .function _startup
   cpsid afi   // Disable all interrupts.
 
+  // Setup interrupt vector table.
   ldr r0, =_vectors
   mcr p15, 0, r0, c12, c0, 0  // Set vector base (TRM 3.2.68).
+
+  // Enable NEON and VFP.
+  mrc p15, 0, r0, c1, c0, 2  // Read coprocessor access register (TRM 3.2.27).
+  orr r0, r0, #0x00F00000  // Privileged and user mode access to CP10 and CP11.
+  mcr p15, 0, r0, c1, c0, 2  // Write coprocessor access register (TRM 3.2.27).
+  isb  // Memory barrier required to clear pipeline.
+  mov r0, #0x40000000  // Enable floating point (TRM 13.4.3).
+  vmsr FPEXC, r0
 
   cpsie a   // Enable imprecise data aborts.
 

@@ -18,6 +18,7 @@ void Main(void) {
   I2cInit(kI2c0);
 
   Tps65217Status status = Tps65217ScaleDcdc(kI2c0, kTps65217Dcdc2, kTps65217DcdcVoltageScale1v325);
+  (void)status;
 
   while (true) {}
 }

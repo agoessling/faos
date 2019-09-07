@@ -21,11 +21,14 @@ TOOLCHAIN_PATH = opt/gcc-arm-8.3-2019.03-x86_64-arm-eabi/bin
 GCC = ${TOOLCHAIN_PATH}/arm-eabi-gcc
 OBJCOPY = ${TOOLCHAIN_PATH}/arm-eabi-objcopy
 
-TARGETFLAGS = -mcpu=cortex-a8
+TARGETFLAGS = -mcpu=cortex-a8 -mfloat-abi=hard -mfpu=neon-vfpv3
 
-ASFLAGS = ${TARGETFLAGS} -Wall -Wextra -Wsign-conversion -Wfloat-conversion -Wmissing-prototypes -Wstrict-prototypes -g
-CFLAGS = ${TARGETFLAGS} -Wall -Wextra -Wsign-conversion -Wfloat-conversion -Wmissing-prototypes -Wstrict-prototypes -g
-LDFLAGS = ${TARGETFLAGS} -Wall -Wextra -Wsign-conversion -Wfloat-conversion -Wmissing-prototypes -Wstrict-prototypes -nostartfiles -g
+COMMONFLAGS = ${TARGETFLAGS} -O0 -Werror -Wall -Wextra -Wsign-conversion -Wfloat-conversion
+COMMONFLAGS += -Wmissing-prototypes -Wstrict-prototypes -g
+
+ASFLAGS = ${COMMONFLAGS}
+CFLAGS = ${COMMONFLAGS}
+LDFLAGS = ${COMMONFLAGS} -nostartfiles
 
 .PHONY: all
 all: ${APP}.elf ${APP}.bin
