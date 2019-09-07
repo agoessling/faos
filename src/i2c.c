@@ -43,6 +43,22 @@ void I2cInit(I2c i2c_num) {
   while (!I2C0.SYSS.RDONE) {}  // Wait for enable.
 }
 
+static void I2cCleanup(volatile PeripheralI2C0 *i2c) {
+  i2c->CON.STP = 1;  // Generate stop.
+
+  // Clear status flags.
+  RegisterI2C0_IRQSTATUS irqstatus;
+  irqstatus.raw = 0;
+  irqstatus.XRDY = 1;
+  irqstatus.RRDY = 1;
+  irqstatus.ARDY = 1;
+  irqstatus.NACK = 1;
+  i2c->IRQSTATUS.raw = irqstatus.raw;
+
+  i2c->BUF.TXFIFO_CLR = 1;  // Clear TX FIFO.
+  i2c->BUF.RXFIFO_CLR = 1;  // Clear RX FIFO.
+}
+
 I2cStatus I2cWriteBlocking(I2c i2c_num, uint8_t address, const uint8_t *buf, int32_t len,
                            bool stop_bit) {
   assert(0 <= i2c_num && i2c_num < kNumI2c);
@@ -51,34 +67,90 @@ I2cStatus I2cWriteBlocking(I2c i2c_num, uint8_t address, const uint8_t *buf, int
 
   I2C0.SA.SA = (uint32_t)address;
   I2C0.CNT.DCOUNT = (uint32_t)len;
-  I2C0.CON.MST = 1;  // Master mode.
-  I2C0.CON.TRX = 1;  // Transmit.
-  I2C0.CON.STP = stop_bit;
-  I2C0.CON.STT = 1;  // Start bit.
-  if(!I2C0.IRQSTATUS_RAW.XRDY){while(1){}}
+
+  // CON must be written atomically so that start and stop request are written at the same time.
+  RegisterI2C0_CON con;
+  con.raw  = 0;
+  con.I2C_EN = 1;
+  con.MST = 1;  // Master mode.
+  con.TRX = 1;  // Transmit.
+  con.STP = stop_bit;
+  con.STT = 1;  // Start bit.
+  I2C0.CON.raw = con.raw;
 
   for (int32_t i = 0; i < len; ++i) {
-    while(I2C0.IRQSTATUS_RAW.XRDY){}// && !I2C0.IRQSTATUS_RAW.ARDY) {}
+    // Wait for room in the FIFO or an early transmission end.
+    while (!(I2C0.IRQSTATUS_RAW.XRDY || I2C0.IRQSTATUS_RAW.ARDY)) {}
 
-    if (I2C0.IRQSTATUS_RAW.NACK) {
-      I2C0.CON.STP = 1;  // Send stop bit to finish transaction.
-      I2C0.IRQSTATUS.raw = (1 << 1);  // NACK.
-      while(1) {}
-      return kI2cStatusNack;
+    // Detect early transmission end.
+    if (I2C0.IRQSTATUS_RAW.ARDY) {
+      if (I2C0.IRQSTATUS_RAW.NACK) {
+        I2cCleanup(&I2C0);
+        return kI2cStatusNack;
+      }
+      I2cCleanup(&I2C0);
+      return kI2cStatusUnknownError;
     }
 
     I2C0.DATA.DATA = (uint32_t)buf[i];
 
-    I2C0.IRQSTATUS.raw = (1 << 4) | (1 << 2);  // XUDF | ARDY
+    I2C0.IRQSTATUS.raw = (1 << 4);  // Clear XRDY.
   }
 
+  // Wait for transmission end.
   while(!I2C0.IRQSTATUS_RAW.ARDY) {}
-  I2C0.IRQSTATUS.raw = (0 << 4) | (1 << 2);  // XUDF | ARDY
+  I2C0.IRQSTATUS.raw = (1 << 2);  // Clear ARDY.
 
   if (I2C0.IRQSTATUS_RAW.NACK) {
-    I2C0.CON.STP = 1;  // Send stop bit to finish transaction.
-    I2C0.IRQSTATUS.raw = (1 << 1);  // NACK.
-    while(1) {}
+    I2cCleanup(&I2C0);
+    return kI2cStatusNack;
+  }
+
+  return kI2cStatusSuccess;
+}
+
+I2cStatus I2cReadBlocking(I2c i2c_num, uint8_t address, uint8_t *buf, int32_t len, bool stop_bit) {
+  assert(0 <= i2c_num && i2c_num < kNumI2c);
+  assert(0 < len && len < (1 << 16));
+  assert(address < (1 << 7));
+
+  I2C0.SA.SA = (uint32_t)address;
+  I2C0.CNT.DCOUNT = (uint32_t)len;
+
+  // CON must be written atomically so that start and stop request are written at the same time.
+  RegisterI2C0_CON con;
+  con.raw = 0;
+  con.I2C_EN = 1;
+  con.MST = 1;  // Master mode.
+  con.STP = stop_bit;
+  con.STT = 1;  // Start bit.
+  I2C0.CON.raw = con.raw;
+
+  for (int32_t i = 0; i < len; ++i) {
+    // Wait for data in the FIFO or an early transmission end.
+    while (!(I2C0.IRQSTATUS_RAW.RRDY || I2C0.IRQSTATUS_RAW.ARDY)) {}
+
+    // Detect early transmission end.
+    if (I2C0.IRQSTATUS_RAW.ARDY) {
+      if (I2C0.IRQSTATUS_RAW.NACK) {
+        I2cCleanup(&I2C0);
+        return kI2cStatusNack;
+      }
+      I2cCleanup(&I2C0);
+      return kI2cStatusUnknownError;
+    }
+
+    buf[i] = (uint8_t)I2C0.DATA.DATA;
+
+    I2C0.IRQSTATUS.raw = (1 << 3);  // Clear RRDY.
+  }
+
+  // Wait for transmission end.
+  while(!I2C0.IRQSTATUS_RAW.ARDY) {}
+  I2C0.IRQSTATUS.raw = (1 << 2);  // Clear ARDY.
+
+  if (I2C0.IRQSTATUS_RAW.NACK) {
+    I2cCleanup(&I2C0);
     return kI2cStatusNack;
   }
 

@@ -15,11 +15,13 @@ typedef enum {
   kI2cStatusSuccess,
   kI2cStatusBusy,
   kI2cStatusNack,
+  kI2cStatusUnknownError,
   kNumI2cStatus
 } I2cStatus;
 
 void I2cInit(I2c i2c_num);
 I2cStatus I2cWriteBlocking(I2c i2c_num, uint8_t address, const uint8_t *buf, int32_t len,
                            bool stop_bit);
+I2cStatus I2cReadBlocking(I2c i2c_num, uint8_t address, uint8_t *buf, int32_t len, bool stop_bit);
 
 #endif  // I2C_H_

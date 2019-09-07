@@ -16,8 +16,10 @@ void Main(void) {
   BoardInit();
   I2cInit(kI2c0);
 
-  uint8_t byte[] = {0x11, 0x19, 0x98};
-  I2cStatus status = I2cWriteBlocking(kI2c0, 0x24, byte, 1, true);
+  uint8_t reg_addr = 0x00;
+  I2cStatus write_status = I2cWriteBlocking(kI2c0, 0x25, &reg_addr, 1, false);
+  uint8_t response;
+  I2cStatus read_status = I2cReadBlocking(kI2c0, 0x24, &response, 1, true);
 
   while (true) {}
 }
