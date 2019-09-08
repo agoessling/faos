@@ -18,6 +18,8 @@ def strip_parent_name(name, parent_name):
   for p in prefix:
     if name.startswith(p) and len(p) < len(name):
       return name[len(p):]
+  if name.startswith('_'):
+    return name[1:]
   return name
 
 class Bitfield:
