@@ -23,7 +23,7 @@ OBJCOPY = ${TOOLCHAIN_PATH}/arm-eabi-objcopy
 
 TARGETFLAGS = -mcpu=cortex-a8 -mfloat-abi=hard -mfpu=neon-vfpv3
 
-COMMONFLAGS = ${TARGETFLAGS} -O0 -Werror -Wall -Wextra -Wsign-conversion -Wfloat-conversion
+COMMONFLAGS = ${TARGETFLAGS} -O2 -Werror -Wall -Wextra -Wsign-conversion -Wfloat-conversion
 COMMONFLAGS += -Wmissing-prototypes -Wstrict-prototypes -g
 
 ASFLAGS = ${COMMONFLAGS}
