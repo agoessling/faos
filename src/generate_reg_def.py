@@ -25,9 +25,12 @@ def strip_parent_name(name, parent_name):
 class Bitfield:
   @classmethod
   def from_xml(cls, elem, parent):
+    keywords = ['NULL']
     name = strip_parent_name(elem.get('id').upper(), parent.name)
     if name[0].isdigit():
       name = 'd' + name
+    if name in keywords:
+      name = 'v' + name
     return cls(
         name=name,
         start=int(elem.get('end')), # XML begin and end are backwards.
