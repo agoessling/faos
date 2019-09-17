@@ -15,7 +15,7 @@ COBJS := $(patsubst ${SRCDIR}/%.c,${OBJDIR}/%.o,${CSRCS})
 
 LDSCRIPT = ${SRCDIR}/linker_script.ld
 
-DEVICE_FILE = opt/ccs/ccs/ccs_base/common/targetdb/devices/AM3358.xml
+DEVICE_FILE = targetdb/devices/AM3358.xml
 
 TOOLCHAIN_PATH = opt/gcc-arm-8.3-2019.03-x86_64-arm-eabi/bin
 GCC = ${TOOLCHAIN_PATH}/arm-eabi-gcc
