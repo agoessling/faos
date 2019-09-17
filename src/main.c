@@ -59,7 +59,7 @@ void Main(void) {
   GpioOutputEnable(kGpio1, 24, true);
   BoardSetLed(0, true);
 
-  UartInit(kUart0, 115.2e3f);
+  UartInit(kUart0, 921.6e3f);
   static const uint8_t msg[] = "Faos booting.\n";
   UartWriteBlocking(kUart0, msg, (int32_t)sizeof(msg));
 
