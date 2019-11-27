@@ -1,5 +1,88 @@
 import ctypes
 
+def print_struct(struct):
+  indent = '  '
+  s = ''
+  s += '{:s}:'.format(type(struct).__name__)
+  for name, *_ in struct._fields_:
+    s += '\n{:s}{:s}: {}'.format(indent, name, getattr(struct, name))
+  print(s)
+
+def table_to_c_array(name, table, indent=''):
+  # Determine number of entries (four bytes) can fit on a line.
+  line_wrap = 100
+  char_per_byte = 6
+  byte_per_entry = 4
+  bytes_per_line = (line_wrap - 1 - len(indent)) // char_per_byte // byte_per_entry * byte_per_entry
+
+  table_bytes = bytes(table)
+  s = '{:s}uint8_t {:s}[{:d}] = {{'.format(indent, name, len(table_bytes))
+
+  for i in range(0, len(table_bytes), bytes_per_line):
+    line_bytes = table_bytes[i:i + bytes_per_line]
+    bytes_str = ', '.join(['{:#04x}'.format(x) for x in line_bytes])
+    s += '\n{:s}  {:s},'.format(indent, bytes_str)
+
+  s += '\n{:s}}};'.format(indent)
+  return s
+
+def set_access_permissions(entry, priv_access, nonpriv_access):
+  '''Set access permissions of table entry.
+
+  Mapping based on Table B3-8 in ARM DDI 0406C.
+
+  Args:
+    entry: A table entry.
+    priv_access: A string representing priviledged permissions.
+        '': no access, 'r': read, 'rw': read/write
+    nonpriv_access: A string representing non-priviledged permissions.
+  '''
+  mapping = {
+      ('', ''): (0, 0),
+      ('rw', ''): (0, 1),
+      ('rw', 'r'): (0, 2),
+      ('rw', 'rw'): (0, 3),
+      ('r', ''): (1, 1),
+      ('r', 'r'): (1, 3)}
+
+  if (priv_access, nonpriv_access) not in mapping:
+    raise KeyError('({}, {}) not in valid combinations: {}'.format(
+        priv_access, nonpriv_access, mapping.keys()))
+
+  ap2, ap10 = mapping[(priv_access, nonpriv_access)]
+  entry.ap2 = ap2
+  entry.ap10 = ap10
+
+def set_memory_attributes(entry, attribute):
+  '''Set memory attributes of table entry.
+
+  Mapping based on Table B3-10 in ARM DDI 0406C.  Normal memory is currently always set to outer and
+  inner write-back, write-allocate.
+
+  Args:
+    entry: A table entry.
+    attribute: A string representing memory attribute. 'ordered', 'device', 'normal'
+  '''
+  valid_attributes = ['ordered', 'device', 'normal']
+  if attribute not in valid_attributes:
+    raise KeyError('{} not a valid attribute: {}'.format(attribute, valid_attributes))
+
+  if attribute == 'ordered':
+    entry.tex = 0
+    entry.c = 0
+    entry.b = 0
+    entry.s = 1  # Not strictly necessary as ordered is always shareable.
+  elif attribute == 'device':
+    entry.tex = 0
+    entry.c = 0
+    entry.b = 1
+    entry.s = 1  # Not strictly necessary as shareable device is always shareable.
+  else:  # 'normal'
+    entry.tex = 1
+    entry.c = 1
+    entry.b = 1
+    entry.s = 1
+
 # Definitions from ARM DDI 0406C B3.5
 
 class FirstLevelInvalidEntry(ctypes.LittleEndianStructure):
@@ -83,6 +166,23 @@ class FirstLevelEntry(ctypes.Union):
 assert(ctypes.sizeof(FirstLevelEntry) == 4)
 
 FirstLevelTable = FirstLevelEntry * 4096
+
+def generate_first_level_table():
+  table = FirstLevelTable()
+  for i, entry in enumerate(table):
+    entry.super_section.base_address = i // 16  # Super sections must be repeated 16 times.
+    entry.super_section.extended_base_address_35_32 = 0
+    entry.super_section.ns = 0  # Require secure priviledges.
+    entry.super_section.super_section = 1  # Is supersection.
+    entry.super_section.ng = 0  # Is global section (doesn't depend on ASID in TLB).
+
+    set_access_permissions(entry.super_section, 'rw', '')
+    set_memory_attributes(entry.super_section, 'device')
+
+    entry.super_section.implementation_defined = 0
+    entry.super_section.xn = 0
+    entry.super_section.entry_type = 2  # Supersection.
+  return table
 
 class SecondLevelInvalidEntry(ctypes.LittleEndianStructure):
   _fields_ = [
