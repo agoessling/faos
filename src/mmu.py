@@ -56,17 +56,13 @@ def set_access_permissions(entry, priv_access, nonpriv_access):
 def set_memory_attributes(entry, attribute):
   '''Set memory attributes of table entry.
 
-  Mapping based on Table B3-10 in ARM DDI 0406C.  Normal memory is currently always set to outer and
-  inner write-back, write-allocate.
+  Mapping based on Table B3-10 in ARM DDI 0406C.  Normal memory is currently always set to
+  non-shareable outer and inner write-back, write-allocate.
 
   Args:
     entry: A table entry.
     attribute: A string representing memory attribute. 'ordered', 'device', 'normal'
   '''
-  valid_attributes = ['ordered', 'device', 'normal']
-  if attribute not in valid_attributes:
-    raise KeyError('{} not a valid attribute: {}'.format(attribute, valid_attributes))
-
   if attribute == 'ordered':
     entry.tex = 0
     entry.c = 0
@@ -77,11 +73,15 @@ def set_memory_attributes(entry, attribute):
     entry.c = 0
     entry.b = 1
     entry.s = 1  # Not strictly necessary as shareable device is always shareable.
-  else:  # 'normal'
+  elif attribute == 'normal':
     entry.tex = 1
     entry.c = 1
     entry.b = 1
-    entry.s = 1
+    entry.s = 0
+  else:
+    valid_attributes = ['ordered', 'device', 'normal']
+    raise KeyError('{} not a valid attribute: {}'.format(attribute, valid_attributes))
+
 
 # Definitions from ARM DDI 0406C B3.5
 
@@ -91,7 +91,7 @@ class FirstLevelInvalidEntry(ctypes.LittleEndianStructure):
       ('ignored', ctypes.c_uint32, 30)]
 
   def __init__(self):
-    super().__init__(0,0)
+    super().__init__(entry_type=0, ignored=0)
 
 assert(ctypes.sizeof(FirstLevelInvalidEntry) == 4)
 
@@ -106,7 +106,7 @@ class FirstLevelPageTableEntry(ctypes.LittleEndianStructure):
       ('base_address', ctypes.c_uint32, 22)]
 
   def __init__(self, **kwargs):
-    super().__init__(entry_type=1, sbz=0, implementation_defined=0, **kwargs)
+    super().__init__(entry_type=1, sbz=0, domain=0, implementation_defined=0, **kwargs)
 
 assert(ctypes.sizeof(FirstLevelPageTableEntry) == 4)
 
@@ -128,7 +128,7 @@ class FirstLevelSectionEntry(ctypes.LittleEndianStructure):
       ('base_address', ctypes.c_uint32, 12)]
 
   def __init__(self, **kwargs):
-    super().__init__(entry_type=2, implementation_defined=0, super_section=0, **kwargs)
+    super().__init__(entry_type=2, domain=0, implementation_defined=0, super_section=0, **kwargs)
 
 assert(ctypes.sizeof(FirstLevelSectionEntry) == 4)
 
@@ -167,30 +167,13 @@ assert(ctypes.sizeof(FirstLevelEntry) == 4)
 
 FirstLevelTable = FirstLevelEntry * 4096
 
-def generate_first_level_table():
-  table = FirstLevelTable()
-  for i, entry in enumerate(table):
-    entry.super_section.base_address = i // 16  # Super sections must be repeated 16 times.
-    entry.super_section.extended_base_address_35_32 = 0
-    entry.super_section.ns = 0  # Require secure priviledges.
-    entry.super_section.super_section = 1  # Is supersection.
-    entry.super_section.ng = 0  # Is global section (doesn't depend on ASID in TLB).
-
-    set_access_permissions(entry.super_section, 'rw', '')
-    set_memory_attributes(entry.super_section, 'device')
-
-    entry.super_section.implementation_defined = 0
-    entry.super_section.xn = 0
-    entry.super_section.entry_type = 2  # Supersection.
-  return table
-
 class SecondLevelInvalidEntry(ctypes.LittleEndianStructure):
   _fields_ = [
       ('entry_type', ctypes.c_uint32, 2),
       ('ignored', ctypes.c_uint32, 30)]
 
   def __init__(self):
-    super().__init__(0,0)
+    super().__init__(entry_type=0, ignored=0)
 
 assert(ctypes.sizeof(SecondLevelInvalidEntry) == 4)
 
