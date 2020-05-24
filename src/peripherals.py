@@ -120,6 +120,7 @@ class Peripheral:
     self.start = int(elem.get('baseaddr'), 16)
     self.end = int(elem.get('endaddr'), 16)
     self.size = int(elem.get('size'), 16)
+    self.virtual_address = self.start
 
     if self.end - self.start + 1 != self.size:
       raise ValueError('Peripheral size mismatch: {}'.format(self))
@@ -210,6 +211,16 @@ class Cpu:
       if self.peripherals[i].end >= self.peripherals[i + 1].start:
         raise ValueError('Peripheral overlap {} - {}'.format(
             self.peripherals[i], self.peripherals[i + 1]))
+
+  def get_peripheral(self, name):
+    periph_list = [x for x in self.peripherals if x.name == name]
+
+    if not periph_list:
+      raise ValueError('Unrecognized peripheral: {:s}'.format(name))
+    if len(periph_list) != 1:
+      raise ValueError('More than one peripheral found for {:s}.'.format(name))
+
+    return periph_list[0]
 
   def structure_to_file(self):
     s = ''
