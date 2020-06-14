@@ -9,9 +9,11 @@ ROOT_PATH+="/.."
 
 main() {
   if [[ "$1" == "--help" || "$1" == "-h" ]]; then
-    echo "Usage: install_toolchain.sh [install uninstall] [ccs arm usb_boot] -- Default: install"
+    echo "Usage: install_toolchain.sh [install uninstall] [bazel ccs arm usb_boot] -- Default: install"
   elif [ "$1" == "uninstall" ]; then
-    if [ "$2" == "ccs" ]; then
+    if [ "$2" == "bazel" ]; then
+      uninstall_bazel
+    elif [ "$2" == "ccs" ]; then
       uninstall_ccs
     elif [ "$2" == "arm" ]; then
       uninstall_arm
@@ -24,7 +26,9 @@ main() {
       exit 1
     fi
   elif [ "$1" == "install" ]; then
-    if [ "$2" == "ccs" ]; then
+    if [ "$2" == "bazel" ]; then
+      install_bazel
+    elif [ "$2" == "ccs" ]; then
       install_ccs
     elif [ "$2" == "arm" ]; then
       install_arm
@@ -49,9 +53,15 @@ main() {
 }
 
 uninstall() {
+  uninstall_bazel
   uninstall_ccs
   uninstall_arm
   uninstall_usb_boot
+}
+
+# Bazel.
+uninstall_bazel() {
+  sudo apt -y remove bazel
 }
 
 # TI CCS.
@@ -79,9 +89,18 @@ uninstall_usb_boot() {
 }
 
 install() {
+  install_bazel
   install_ccs
   install_arm
   install_usb_boot
+}
+
+# Bazel.
+install_bazel() {
+  sudo apt -y install curl
+  curl https://bazel.build/bazel-release.pub.gpg | sudo apt-key add -
+  echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+  sudo apt update && sudo apt -y install bazel
 }
 
 # TI CCS.
