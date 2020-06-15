@@ -27,6 +27,7 @@ cc_toolchain(
     name = "cc_toolchain_arm_none_eabi",
     all_files = "//toolchain/arm-none-eabi:all_files",
     ar_files = "//toolchain/arm-none-eabi:ar_files",
+    as_files = "//toolchain/arm-none-eabi:as_files",
     compiler_files = "//toolchain/arm-none-eabi:compiler_files",
     dwp_files = ":empty",
     linker_files = "//toolchain/arm-none-eabi:linker_files",

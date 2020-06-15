@@ -6,6 +6,7 @@ def _impl(ctx):
         tool_path(name = "gcc", path = "arm-none-eabi/arm-none-eabi-gcc"),
         tool_path(name = "ld", path = "arm-none-eabi/arm-none-eabi-ld"),
         tool_path(name = "ar", path = "arm-none-eabi/arm-none-eabi-ar"),
+        tool_path(name = "as", path = "arm-none-eabi/arm-none-eabi-as"),
         tool_path(name = "cpp", path = "arm-none-eabi/arm-none-eabi-cpp"),
         tool_path(name = "gcov", path = "arm-none-eabi/arm-none-eabi-gcov"),
         tool_path(name = "nm", path = "arm-none-eabi/arm-none-eabi-nm"),

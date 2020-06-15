@@ -43,6 +43,14 @@ filegroup(
 )
 
 filegroup(
+    name = "as_files",
+    srcs = [
+        "arm-none-eabi-as",
+        "@arm_none_eabi//:as",
+    ],
+)
+
+filegroup(
     name = "objcopy_files",
     srcs = [
         "arm-none-eabi-objcopy",
