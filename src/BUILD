@@ -5,13 +5,8 @@ py_binary(
     srcs = ["generate_reg_def.py"],
 )
 
-filegroup(
-    name = "linker_script",
-    srcs = ["linker_script.ld"],
-)
-
 cc_binary(
-    name = "faos",
+    name = "faos.elf",
     srcs = ["main.c"],
     deps = [
         ":assert",
@@ -21,6 +16,7 @@ cc_binary(
         ":gpio",
         ":i2c",
         "linker_script.ld",
+        ":startup",
         ":tps65217",
         ":uart",
     ],
