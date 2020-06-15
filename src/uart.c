@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "assert.h"
-#include "autogen/reg_def.h"
+#include "src/autogen/reg_def.h"
 #include "clock.h"
 
 static volatile PeripheralUART0 *const kUartPeripherals[kNumUart] = {

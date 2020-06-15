@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "assert.h"
-#include "autogen/reg_def.h"
+#include "src/autogen/reg_def.h"
 
 static volatile PeripheralGPIO0 *const kGpioPeripherals[kNumGpio] = {
   [kGpio0] = &GPIO0,

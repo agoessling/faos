@@ -1,10 +1,8 @@
-#include "main.h"
-
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "assert.h"
-#include "autogen/reg_def.h"
+#include "src/autogen/reg_def.h"
 #include "clock.h"
 #include "ddr3.h"
 #include "gpio.h"
@@ -48,6 +46,8 @@ static void BoardSetLed(int32_t led, bool state) {
   assert(0 <= led && led < 4);
   GpioSetPin(kGpio1, 21 + led, state);
 }
+
+void Main(void);
 
 void Main(void) {
   BoardInit();

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "autogen/reg_def.h"
+#include "src/autogen/reg_def.h"
 #include "clock.h"
 
 bool Ddr3Verify(void) {

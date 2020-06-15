@@ -1,20 +1,35 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl", "feature", "flag_group", "flag_set", "tool_path")
 
-def wrapper_path(ctx, tool):
-    wrapped_path = "{}/arm-none-eabi-{}{}".format(ctx.attr.wrapper_path, tool, ctx.attr.wrapper_ext)
-    return tool_path(name = tool, path = wrapped_path)
-
 def _impl(ctx):
     tool_paths = [
-        wrapper_path(ctx, "gcc"),
-        wrapper_path(ctx, "ld"),
-        wrapper_path(ctx, "ar"),
-        wrapper_path(ctx, "cpp"),
-        wrapper_path(ctx, "gcov"),
-        wrapper_path(ctx, "nm"),
-        wrapper_path(ctx, "objdump"),
-        wrapper_path(ctx, "strip"),
+        tool_path(name = "gcc", path = "arm-none-eabi/arm-none-eabi-gcc"),
+        tool_path(name = "ld", path = "arm-none-eabi/arm-none-eabi-ld"),
+        tool_path(name = "ar", path = "arm-none-eabi/arm-none-eabi-ar"),
+        tool_path(name = "cpp", path = "arm-none-eabi/arm-none-eabi-cpp"),
+        tool_path(name = "gcov", path = "arm-none-eabi/arm-none-eabi-gcov"),
+        tool_path(name = "nm", path = "arm-none-eabi/arm-none-eabi-nm"),
+        tool_path(name = "objdump", path = "arm-none-eabi/arm-none-eabi-objdump"),
+        tool_path(name = "strip", path = "arm-none-eabi/arm-none-eabi-strip"),
+    ]
+
+    all_compile_actions = [
+        ACTION_NAMES.c_compile,
+        ACTION_NAMES.cpp_compile,
+        ACTION_NAMES.linkstamp_compile,
+        ACTION_NAMES.assemble,
+        ACTION_NAMES.preprocess_assemble,
+        ACTION_NAMES.cpp_header_parsing,
+        ACTION_NAMES.cpp_module_compile,
+        ACTION_NAMES.cpp_module_codegen,
+        ACTION_NAMES.clif_match,
+        ACTION_NAMES.lto_backend,
+    ]
+
+    all_link_actions = [
+        ACTION_NAMES.cpp_link_executable,
+        ACTION_NAMES.cpp_link_dynamic_library,
+        ACTION_NAMES.cpp_link_nodeps_dynamic_library,
     ]
 
     compiler_flags = [
@@ -36,25 +51,21 @@ def _impl(ctx):
         "-nostartfiles",
     ]
 
+    include_flags = [
+        "-isystem",
+        "external/arm_none_eabi/lib/gcc/arm-none-eabi/9.2.1/include",
+        "-isystem",
+        "external/arm_none_eabi/arm-none-eabi/include",
+    ]
+
     toolchain_compiler_flags = feature(
         name = "compiler_flags",
         enabled = True,
         flag_sets = [
             flag_set(
-                actions = [
-                    ACTION_NAMES.assemble,
-                    ACTION_NAMES.preprocess_assemble,
-                    ACTION_NAMES.linkstamp_compile,
-                    ACTION_NAMES.c_compile,
-                    ACTION_NAMES.cpp_compile,
-                    ACTION_NAMES.cpp_header_parsing,
-                    ACTION_NAMES.cpp_module_compile,
-                    ACTION_NAMES.cpp_module_codegen,
-                    ACTION_NAMES.lto_backend,
-                    ACTION_NAMES.clif_match,
-                ],
+                actions = all_compile_actions,
                 flag_groups = [
-                    flag_group(flags = compiler_flags),
+                    flag_group(flags = include_flags + compiler_flags),
                 ],
             ),
         ],
@@ -65,11 +76,7 @@ def _impl(ctx):
         enabled = True,
         flag_sets = [
             flag_set(
-                actions = [
-                    ACTION_NAMES.cpp_link_executable,
-                    ACTION_NAMES.cpp_link_dynamic_library,
-                    ACTION_NAMES.cpp_link_nodeps_dynamic_library,
-                ],
+                actions = all_link_actions,
                 flag_groups = [
                     flag_group(flags = linker_flags),
                 ],
@@ -99,8 +106,6 @@ cc_arm_none_eabi_config = rule(
     attrs = {
         "toolchain_identifier": attr.string(default = ""),
         "host_system_name": attr.string(default = ""),
-        "wrapper_path": attr.string(default = ""),
-        "wrapper_ext": attr.string(default = ""),
         "gcc_repo": attr.string(default = ""),
         "gcc_version": attr.string(default = ""),
     },

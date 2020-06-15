@@ -1,6 +1,6 @@
 workspace(name = 'faos')
 
-load("//toolchain:arm_none_eabi_deps.bzl", "arm_none_eabi_deps")
+load("//toolchain/arm-none-eabi:arm_none_eabi_deps.bzl", "arm_none_eabi_deps")
 
 arm_none_eabi_deps()
 
