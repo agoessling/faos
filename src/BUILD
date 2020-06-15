@@ -28,7 +28,7 @@ cc_binary(
 
 cc_library(
     name = "startup",
-    srcs = ["startup.s"],
+    srcs = ["startup.S"],
 )
 
 cc_library(
