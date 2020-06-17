@@ -26,6 +26,14 @@ cc_binary(
     ],
 )
 
+genrule(
+    name = "faos_bin",
+    srcs = [":faos.elf"],
+    outs = ["faos.bin"],
+    cmd = "$(execpath @arm_none_eabi//:objcopy) -O binary $< $@",
+    tools = ["@arm_none_eabi//:objcopy"],
+)
+
 cc_library(
     name = "startup",
     srcs = ["startup.S"],
