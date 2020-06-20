@@ -1,8 +1,15 @@
-package(default_visibility = ["//visibility:public"])
+load("//toolchain:usb_boot.bzl", "usb_boot")
+
+usb_boot(
+    name = "usb_deploy",
+    image = ":faos.bin",
+    visibility = ["//visibility:public"],
+)
 
 py_binary(
     name = "generate_reg_def",
     srcs = ["generate_reg_def.py"],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(
@@ -24,6 +31,7 @@ cc_binary(
         "-T",
         "$(rootpath linker_script.ld)"
     ],
+    visibility = ["//visibility:public"],
 )
 
 genrule(
@@ -32,16 +40,19 @@ genrule(
     outs = ["faos.bin"],
     cmd = "$(execpath @arm_none_eabi//:objcopy) -O binary $< $@",
     tools = ["@arm_none_eabi//:objcopy"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "startup",
     srcs = ["startup.S"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "assert",
     hdrs = ["assert.h"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -52,6 +63,7 @@ cc_library(
         ":assert",
         "//src/autogen:registers",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -62,6 +74,7 @@ cc_library(
         ":clock",
         "//src/autogen:registers",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -72,6 +85,7 @@ cc_library(
         ":assert",
         "//src/autogen:registers",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -83,6 +97,7 @@ cc_library(
         ":clock",
         "//src/autogen:registers",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -93,6 +108,7 @@ cc_library(
         ":assert",
         ":i2c",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -104,4 +120,5 @@ cc_library(
         ":clock",
         "//src/autogen:registers",
     ],
+    visibility = ["//visibility:public"],
 )

@@ -1,8 +1,4 @@
 opt
-obj
 *.swp
-*.elf
-*.bin
-*.pyc
 src/autogen
 bazel-*

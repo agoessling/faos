@@ -6,7 +6,7 @@ import textwrap
 import mmu
 import peripherals
 
-_XML_FILE = '../targetdb/devices/AM3358.xml'
+_XML_FILE = '../am3358_db/devices/AM3358.xml'
 _CORE = 'CortexA8'
 
 
