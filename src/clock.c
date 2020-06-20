@@ -1,7 +1,7 @@
 #include "clock.h"
 
 #include "assert.h"
-#include "autogen/reg_def.h"
+#include "src/autogen/reg_def.h"
 
 typedef enum {
   kClockPllForceSigned = -1,
