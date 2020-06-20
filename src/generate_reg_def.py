@@ -2,7 +2,7 @@
 
 import argparse
 
-import peripherals
+from src import peripherals
 
 def main():
   parser = argparse.ArgumentParser(description='Create register definition from TI XML.')

@@ -9,6 +9,15 @@ usb_boot(
 py_binary(
     name = "generate_reg_def",
     srcs = ["generate_reg_def.py"],
+    deps = [
+        ":peripherals",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "peripherals",
+    srcs = ["peripherals.py"],
     visibility = ["//visibility:public"],
 )
 
