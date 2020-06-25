@@ -8,23 +8,31 @@ PHDRS {
 
 ENTRY(_startup)
 
+_stack_top = ORIGIN(a8ram) + LENGTH(a8ram);
+
 SECTIONS {
-  . = ORIGIN(a8ram);
-  .text ALIGN(4) : {
+  .text : ALIGN(4) {
     *(.text._startup)
     *(.text)
     *(.text.*)
   } >a8ram :image
 
-  .rodata ALIGN(4) : {
+  .rodata : ALIGN(4) {
     *(.rodata)
     *(.rodata.*)
   } >a8ram :image
 
-  .data ALIGN(4) : {
+  .data : ALIGN(4) {
     *(.data)
     *(.data.*)
   } >a8ram :image
+
+  .bss (NOLOAD) : ALIGN(4) {
+    _bss_start = .;
+    *(.bss)
+    *(.bss.*)
+    _bss_end = .;
+  } >a8ram :NONE
 
   .orphan : {
     INPUT_SECTION_FLAGS(SHF_ALLOC) *(*)
