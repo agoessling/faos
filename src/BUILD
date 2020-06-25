@@ -32,6 +32,7 @@ cc_binary(
         ":gpio",
         ":i2c",
         "linker_script.ld",
+        ":mmc",
         ":startup",
         ":time",
         ":tps65217",
@@ -94,6 +95,22 @@ cc_library(
     deps = [
         ":assert",
         ":clock",
+        "//src/autogen:registers",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "mmc",
+    srcs = [
+        "mmc.c",
+        "mmc_spec.h",
+    ],
+    hdrs = ["mmc.h"],
+    deps = [
+        ":assert",
+        ":clock",
+        ":time",
         "//src/autogen:registers",
     ],
     visibility = ["//visibility:public"],
