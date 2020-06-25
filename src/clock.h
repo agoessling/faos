@@ -5,6 +5,10 @@ static inline float ClockGet192Mhz(void) {
   return 192e6f;
 }
 
+static inline float ClockGetOsc(void) {
+  return 24e6f;
+}
+
 float ClockSetMpuFreq(float freq);
 void ClockInitDdr(void);
 

@@ -7,6 +7,7 @@
 #include "ddr3.h"
 #include "gpio.h"
 #include "i2c.h"
+#include "time.h"
 #include "tps65217.h"
 #include "uart.h"
 
@@ -59,6 +60,8 @@ void Main(void) {
   GpioOutputEnable(kGpio1, 24, true);
   BoardSetLed(0, true);
 
+  TimeInit();
+
   UartInit(kUart0, 921.6e3f);
   static const uint8_t msg[] = "Faos booting.\n";
   UartWriteBlocking(kUart0, msg, (int32_t)sizeof(msg));
@@ -74,5 +77,10 @@ void Main(void) {
   // Setup DDR3.
   Ddr3Init();
 
-  while (true) {}
+  bool led_state = false;
+  while (true) {
+    BoardSetLed(2, led_state);
+    TimeDelayUs((int32_t)1e6f);
+    led_state = !led_state;
+  }
 }

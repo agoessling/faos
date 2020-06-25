@@ -33,6 +33,7 @@ cc_binary(
         ":i2c",
         "linker_script.ld",
         ":startup",
+        ":time",
         ":tps65217",
         ":uart",
     ],
@@ -70,6 +71,29 @@ cc_library(
     hdrs = ["clock.h"],
     deps = [
         ":assert",
+        "//src/autogen:registers",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "time",
+    srcs = ["time.c"],
+    hdrs = ["time.h"],
+    deps = [
+        ":assert",
+        ":dmtimer",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "dmtimer",
+    srcs = ["dmtimer.c"],
+    hdrs = ["dmtimer.h"],
+    deps = [
+        ":assert",
+        ":clock",
         "//src/autogen:registers",
     ],
     visibility = ["//visibility:public"],
