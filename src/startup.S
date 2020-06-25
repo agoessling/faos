@@ -56,6 +56,10 @@
   ldr r0, =_vectors
   mcr p15, 0, r0, c12, c0, 0  // Set vector base (TRM 3.2.68).
 
+  // Initialize stack pointer.
+  ldr r0, =_stack_top
+  mov sp, r0
+
   // Enable NEON and VFP.
   mrc p15, 0, r0, c1, c0, 2  // Read coprocessor access register (TRM 3.2.27).
   orr r0, r0, #0x00F00000  // Privileged and user mode access to CP10 and CP11.
@@ -66,6 +70,7 @@
 
   cpsie a   // Enable imprecise data aborts.
 
+  bl _zero_bss  // Zero .bss
   bl Main  // Branch to Main().
   bl _idle  // If Main() returns idle.
 
@@ -73,6 +78,22 @@
 .function _idle
   wfi
   b _idle
+
+.function _zero_bss
+  ldr r0, =_bss_start
+  ldr r1, =_bss_end
+  mov r2, #0
+
+  // Check for empty .bss
+  cmp r0, r1
+  bxeq lr
+
+zero_loop:
+  strb r2, [r0], #1
+  cmp r0, r1
+  bne zero_loop
+
+  bx lr
 
 .variable _vectors
   b _exception_reset
@@ -101,3 +122,5 @@
 
 .function _exception_irq
   b .
+
+.done
