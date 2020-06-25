@@ -1097,7 +1097,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_0" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_0" offset="0x800" width="32">
+  <register acronym="conf_gpmc_ad0" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad0" offset="0x800" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"></bitfield>
     
@@ -1127,7 +1127,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_1" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_1" offset="0x804" width="32">
+  <register acronym="conf_gpmc_ad1" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad1" offset="0x804" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1157,7 +1157,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_2" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_2" offset="0x808" width="32">
+  <register acronym="conf_gpmc_ad2" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad2" offset="0x808" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1187,7 +1187,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_3" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_3" offset="0x80C" width="32">
+  <register acronym="conf_gpmc_ad3" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad3" offset="0x80C" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1217,7 +1217,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_4" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_4" offset="0x810" width="32">
+  <register acronym="conf_gpmc_ad4" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad4" offset="0x810" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1247,7 +1247,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_5" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_5" offset="0x814" width="32">
+  <register acronym="conf_gpmc_ad5" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad5" offset="0x814" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1277,7 +1277,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_6" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_6" offset="0x818" width="32">
+  <register acronym="conf_gpmc_ad6" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad6" offset="0x818" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1307,7 +1307,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_7" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_7" offset="0x81C" width="32">
+  <register acronym="conf_gpmc_ad7" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad7" offset="0x81C" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1337,7 +1337,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_8" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_8" offset="0x820" width="32">
+  <register acronym="conf_gpmc_ad8" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad8" offset="0x820" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1367,7 +1367,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_9" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_9" offset="0x824" width="32">
+  <register acronym="conf_gpmc_ad9" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad9" offset="0x824" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1397,7 +1397,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_10" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_10" offset="0x828" width="32">
+  <register acronym="conf_gpmc_ad10" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad10" offset="0x828" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1427,7 +1427,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_11" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_11" offset="0x82C" width="32">
+  <register acronym="conf_gpmc_ad11" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad11" offset="0x82C" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1457,7 +1457,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_12" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_12" offset="0x830" width="32">
+  <register acronym="conf_gpmc_ad12" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad12" offset="0x830" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1487,7 +1487,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_13" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_13" offset="0x834" width="32">
+  <register acronym="conf_gpmc_ad13" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad13" offset="0x834" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1517,7 +1517,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_14" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_14" offset="0x838" width="32">
+  <register acronym="conf_gpmc_ad14" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad14" offset="0x838" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -1547,7 +1547,7 @@
   </register>
   
   
-  <register acronym="conf_gpmc_ad_15" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad_15" offset="0x83C" width="32">
+  <register acronym="conf_gpmc_ad15" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_ad15" offset="0x83C" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
@@ -2027,13 +2027,13 @@
   </register>
   
   
-  <register acronym="conf_gpmc_csn_0" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn_0" offset="0x87C" width="32">
+  <register acronym="conf_gpmc_csn0" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn0" offset="0x87C" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"></bitfield>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"></bitfield>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csnx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csn_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"></bitenum>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"></bitenum>
   </bitfield>
@@ -2048,22 +2048,22 @@
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"></bitenum>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csnx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csn_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"></bitenum>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"></bitenum>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csnx_mmode" rwaccess="RW" width="3"></bitfield>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csn_mmode" rwaccess="RW" width="3"></bitfield>
   </register>
   
   
-  <register acronym="conf_gpmc_csn_1" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn_1" offset="0x880" width="32">
+  <register acronym="conf_gpmc_csn1" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn1" offset="0x880" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"/>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csnx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csn_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
@@ -2078,22 +2078,22 @@
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csnx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csn_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csnx_mmode" rwaccess="RW" width="3"/>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csn_mmode" rwaccess="RW" width="3"/>
   </register>
   
   
-  <register acronym="conf_gpmc_csn_2" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn_2" offset="0x884" width="32">
+  <register acronym="conf_gpmc_csn2" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn2" offset="0x884" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"/>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csnx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csn_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
@@ -2108,22 +2108,22 @@
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csnx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csn_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csnx_mmode" rwaccess="RW" width="3"/>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csn_mmode" rwaccess="RW" width="3"/>
   </register>
   
   
-  <register acronym="conf_gpmc_csn_3" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn_3" offset="0x888" width="32">
+  <register acronym="conf_gpmc_csn3" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_gpmc_csn3" offset="0x888" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"/>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csnx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_gpmc_csn_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
@@ -2138,12 +2138,12 @@
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csnx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_gpmc_csn_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csnx_mmode" rwaccess="RW" width="3"/>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_gpmc_csn_mmode" rwaccess="RW" width="3"/>
   </register>
   
   
