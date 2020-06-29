@@ -50,6 +50,7 @@ def _impl(ctx):
 
     linker_flags = [
         "-nostartfiles",
+        "-Wl,--gc-sections",
     ]
 
     include_flags = [
@@ -79,7 +80,7 @@ def _impl(ctx):
             flag_set(
                 actions = all_link_actions,
                 flag_groups = [
-                    flag_group(flags = linker_flags),
+                    flag_group(flags = compiler_flags + linker_flags),
                 ],
             ),
         ],

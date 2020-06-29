@@ -34,6 +34,10 @@ SECTIONS {
     _bss_end = .;
   } >a8ram :NONE
 
+  /DISCARD/ :  {
+    *(.ARM.exidx.*) /* Used for exception unwinding in gcclib. */
+  }
+
   .orphan : {
     INPUT_SECTION_FLAGS(SHF_ALLOC) *(*)
   } :NONE
