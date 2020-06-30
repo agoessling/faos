@@ -1,27 +1,51 @@
 #ifndef MMC_SPEC_H_
 #define MMC_SPEC_H_
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "src/autogen/reg_def.h"
 
-static const RegisterMMCHS2_SD_CMD kMmcCommandListing[57] = {
-  [0] = {.INDX = 0, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 0, .DDIR = 0, .BCE = 0},
-  [1] = {.INDX = 1, .DP = 0, .CICE = 0, .CCCE = 0, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
-  [2] = {.INDX = 2, .DP = 0, .CICE = 0, .CCCE = 1, .RSP_TYPE = 1, .DDIR = 0, .BCE = 0},
-  [3] = {.INDX = 3, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
-  [6] = {.INDX = 6, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 3, .DDIR = 0, .BCE = 0},
-  [7] = {.INDX = 7, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
-  [8] = {.INDX = 8, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
-  [9] = {.INDX = 9, .DP = 0, .CICE = 0, .CCCE = 1, .RSP_TYPE = 1, .DDIR = 0, .BCE = 0},
-  [13] = {.INDX = 13, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
-  [14] = {.INDX = 14, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
-  [17] = {.INDX = 17, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
-  [18] = {.INDX = 18, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 1,
-          .MSBS = 1, .ACEN = 1},
-  [19] = {.INDX = 19, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
-  [23] = {.INDX = 23, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
-  [24] = {.INDX = 24, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
-  [25] = {.INDX = 25, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 1,
-          .MSBS = 1, .ACEN = 1},
+typedef struct {
+  RegisterMMCHS2_SD_CMD sd_cmd;
+  bool check_device_status;
+} MmcCommandInfo;
+
+static const MmcCommandInfo kMmcCommandListing[57] = {
+  [0] = {.sd_cmd = {.INDX = 0, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 0, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [1] = {.sd_cmd = {.INDX = 1, .DP = 0, .CICE = 0, .CCCE = 0, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [2] = {.sd_cmd = {.INDX = 2, .DP = 0, .CICE = 0, .CCCE = 1, .RSP_TYPE = 1, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [3] = {.sd_cmd = {.INDX = 3, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+         .check_device_status = true},
+  [6] = {.sd_cmd = {.INDX = 6, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 3, .DDIR = 0, .BCE = 0},
+         .check_device_status = true},
+  [7] = {.sd_cmd = {.INDX = 7, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+         .check_device_status = true},
+  [8] = {.sd_cmd = {.INDX = 8, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
+         .check_device_status = true},
+  [9] = {.sd_cmd = {.INDX = 9, .DP = 0, .CICE = 0, .CCCE = 1, .RSP_TYPE = 1, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [13] = {.sd_cmd = {.INDX = 13, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+  [14] = {.sd_cmd = {.INDX = 14, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
+          .check_device_status = true},
+  [17] = {.sd_cmd = {.INDX = 17, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
+          .check_device_status = true},
+  [18] = {.sd_cmd = {.INDX = 18, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 1,
+                     .MSBS = 1, .ACEN = 1},
+          .check_device_status = true},
+  [19] = {.sd_cmd = {.INDX = 19, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+  [23] = {.sd_cmd = {.INDX = 23, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+  [24] = {.sd_cmd = {.INDX = 24, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+  [25] = {.sd_cmd = {.INDX = 25, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 1,
+                     .MSBS = 1, .ACEN = 1},
+          .check_device_status = true},
 };
 
 typedef union {
@@ -113,6 +137,25 @@ typedef union {
 } MmcDeviceStatus;
 
 _Static_assert(sizeof(MmcDeviceStatus) == 4, "Register size mismatch.");
+
+static const MmcDeviceStatus kMmcDeviceStatusErrorBits = {
+  .switch_error = 1,
+  .erase_reset = 1,
+  .wp_erase_skip = 1,
+  .cid_csd_overwrite = 1,
+  .error = 1,
+  .cc_error = 1,
+  .device_ecc_failed = 1,
+  .illegal_command = 1,
+  .com_crc_error = 1,
+  .lock_unlock_failed = 1,
+  .wp_violation = 1,
+  .erase_param = 1,
+  .erase_seq_error = 1,
+  .block_len_error = 1,
+  .address_misalign = 1,
+  .address_out_of_range = 1,
+};
 
 typedef union {
   MmcOcr ocr;

@@ -85,20 +85,27 @@ static inline void MmcWriteBlockToBuffer(volatile PeripheralMMCHS2 *const mmc, u
 static MmcStatus MmcSendCmd(volatile PeripheralMMCHS2 *const mmc, uint32_t index,
                                uint32_t argument) {
   assert(index <= 56);
-  RegisterMMCHS2_SD_CMD sd_cmd = kMmcCommandListing[index];
+  MmcCommandInfo cmd_info = kMmcCommandListing[index];
 
   mmc->SD_ARG.raw = argument;
 
   // Check if command in progress as well as data transfer if needed for particular command.
-  if (mmc->SD_PSTATE.CMDI || (sd_cmd.DP && mmc->SD_PSTATE.DATI)) {
+  if (mmc->SD_PSTATE.CMDI || (cmd_info.sd_cmd.DP && mmc->SD_PSTATE.DATI)) {
     return kMmcStatusBusy;
+  }
+
+  // Check device status errors for commands that return a status.
+  if (cmd_info.check_device_status) {
+    mmc->SD_CSRE.raw = kMmcDeviceStatusErrorBits.raw;
+  } else {
+    mmc->SD_CSRE.raw = 0;
   }
 
   // Clear flags before command.
   mmc->SD_STAT.raw = 0xFFFFFFFF;
 
   // Initiate command.
-  mmc->SD_CMD.raw = sd_cmd.raw;
+  mmc->SD_CMD.raw = cmd_info.sd_cmd.raw;
 
   // Wait for the command to complete or an error to occur.
   while (!(mmc->SD_STAT.CC || mmc->SD_STAT.ERRI)) {}
@@ -271,7 +278,8 @@ static MmcStatus MmcTestDataBus(volatile PeripheralMMCHS2 *const mmc, MmcBusWidt
   if (status != kMmcStatusSuccess) return status;
 
   // Wait to write data.
-  while (!mmc->SD_PSTATE.BWE) {}
+  status = MmcWaitBufferWrite(mmc);
+  if (status != kMmcStatusSuccess) return status;
   mmc->SD_DATA.raw = data;
 
   // 8-bit bus sends 8 bytes.
@@ -290,7 +298,8 @@ static MmcStatus MmcTestDataBus(volatile PeripheralMMCHS2 *const mmc, MmcBusWidt
   if (status != kMmcStatusSuccess) return status;
 
   // Wait to read data.
-  while (!mmc->SD_PSTATE.BRE) {}
+  status = MmcWaitBufferRead(mmc);
+  if (status != kMmcStatusSuccess) return status;
 
   switch (bus_width) {
     case kMmcBusWidth1:
@@ -473,28 +482,6 @@ MmcStatus MmcInit(Mmc mmc_num, MmcBusWidth bus_width) {
   }
   mmc->SD_BLK.BLEN = kMmcBlockLength;
 
-  // Report errors in device status of R1, and R1b responses.
-  // This is compared against SD_RSP10 and therefore isn't compared for auto CMD 12 responses.
-  // This must be placed here as here on out all command responses are R1 or R1b.
-  MmcDeviceStatus device_status = {0};
-  device_status.switch_error = 1;
-  device_status.erase_reset = 1;
-  device_status.wp_erase_skip = 1;
-  device_status.cid_csd_overwrite = 1;
-  device_status.error = 1;
-  device_status.cc_error = 1;
-  device_status.device_ecc_failed = 1;
-  device_status.illegal_command = 1;
-  device_status.com_crc_error = 1;
-  device_status.lock_unlock_failed = 1;
-  device_status.wp_violation = 1;
-  device_status.erase_param = 1;
-  device_status.erase_seq_error = 1;
-  device_status.block_len_error = 1;
-  device_status.address_misalign = 1;
-  device_status.address_out_of_range = 1;
-  mmc->SD_CSRE.raw = device_status.raw;
-
   // Send CMD 7 (Select card).
   status = MmcSendCmd(mmc, 7, 1 << 16);
   if (status != kMmcStatusSuccess) return status;
@@ -542,7 +529,15 @@ MmcStatus MmcWriteMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t n
   }
 
   // Block on device write.
-  return MmcWaitTransferComplete(mmc);
+  status = MmcWaitTransferComplete(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  // Check device status returned from Auto CMD12.  This is not automatically checked by CSRE.
+  if (mmc->SD_RSP76.raw & kMmcDeviceStatusErrorBits.raw) {
+    return kMmcStatusError;
+  }
+
+  return kMmcStatusSuccess;
 }
 
 MmcStatus MmcReadMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t num_sectors,
@@ -566,7 +561,15 @@ MmcStatus MmcReadMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t nu
   }
 
   // Transfer should already be complete. Check for errors.
-  return MmcWaitTransferComplete(mmc);
+  status = MmcWaitTransferComplete(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  // Check device status returned from Auto CMD12.  This is not automatically checked by CSRE.
+  if (mmc->SD_RSP76.raw & kMmcDeviceStatusErrorBits.raw) {
+    return kMmcStatusError;
+  }
+
+  return kMmcStatusSuccess;
 }
 
 MmcStatus MmcWriteBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
