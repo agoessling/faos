@@ -462,6 +462,11 @@ MmcStatus MmcInit(Mmc mmc_num, MmcBusWidth bus_width) {
     r3 = MmcGetResponseR1R3(mmc);
   } while (!r3.ocr.busy);  // Busy is inverted.
 
+  // Verify our assumption sector addressing mode (>2GB).
+  if (r3.ocr.access_mode != 2) {
+    return kMmcStatusError;
+  }
+
   // Send CMD 2 (Send CID).
   status = MmcSendCmd(mmc, 2, 0);
   if (status != kMmcStatusSuccess) return status;
@@ -516,7 +521,7 @@ MmcStatus MmcWriteMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t n
 
   mmc->SD_BLK.NBLK = num_sectors;
 
-  // Current assume memory is >2GB so the address is the sector address.
+  // Currently assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 25, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
@@ -549,7 +554,7 @@ MmcStatus MmcReadMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t nu
 
   mmc->SD_BLK.NBLK = num_sectors;
 
-  // Current assume memory is >2GB so the address is the sector address.
+  // Currently assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 18, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
@@ -578,7 +583,7 @@ MmcStatus MmcWriteBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
   assert(0 <= mmc_num && mmc_num < kNumMmc);
   volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
 
-  // Current assume memory is >2GB so the address is the sector address.
+  // Currently assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 24, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
@@ -596,7 +601,7 @@ MmcStatus MmcReadBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
   assert(0 <= mmc_num && mmc_num < kNumMmc);
   volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
 
-  // Current assume memory is >2GB so the address is the sector address.
+  // Currently assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 17, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
