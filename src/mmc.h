@@ -38,5 +38,6 @@ MmcStatus MmcReadMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t nu
                                 uint8_t *dest);
 MmcStatus MmcWriteMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t num_sectors,
                                  uint8_t *src);
+MmcStatus MmcGetSectorCount(Mmc mmc_num, uint32_t *sector_count);
 
 #endif  // MMC_H_

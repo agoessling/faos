@@ -332,7 +332,7 @@ static MmcStatus MmcTestDataBus(volatile PeripheralMMCHS2 *const mmc, MmcBusWidt
 }
 
 MmcStatus MmcWriteReadTest(Mmc mmc_num, uint32_t sector_address) {
-  // Use 4kB on stack for test.
+  // Use 2kB on stack for test.
   uint8_t data[4 * kMmcBlockLength];
 
   // Psuedo random number.
@@ -516,6 +516,7 @@ MmcStatus MmcWriteMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t n
 
   mmc->SD_BLK.NBLK = num_sectors;
 
+  // Current assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 25, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
@@ -548,6 +549,7 @@ MmcStatus MmcReadMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t nu
 
   mmc->SD_BLK.NBLK = num_sectors;
 
+  // Current assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 18, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
@@ -576,6 +578,7 @@ MmcStatus MmcWriteBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
   assert(0 <= mmc_num && mmc_num < kNumMmc);
   volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
 
+  // Current assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 24, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
@@ -593,6 +596,7 @@ MmcStatus MmcReadBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
   assert(0 <= mmc_num && mmc_num < kNumMmc);
   volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
 
+  // Current assume memory is >2GB so the address is the sector address.
   MmcStatus status = MmcSendCmd(mmc, 17, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
@@ -604,4 +608,28 @@ MmcStatus MmcReadBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
 
   // Transfer should already be complete. Check for errors.
   return MmcWaitTransferComplete(mmc);
+}
+
+MmcStatus MmcGetSectorCount(Mmc mmc_num, uint32_t *sector_count) {
+  assert(0 <= mmc_num && mmc_num < kNumMmc);
+  volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
+
+  MmcStatus status = MmcSendCmd(mmc, 8, 0);
+  if (status != kMmcStatusSuccess) return status;
+
+  // Wait to read data.  Blocks on device read.
+  status = MmcWaitBufferRead(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  // Place fairly large buffer (512B) on stack.
+  MmcExtCsd ext_csd;
+  MmcReadBlockFromBuffer(mmc, ext_csd.bytes);
+
+  // Transfer should already be complete. Check for errors.
+  status = MmcWaitTransferComplete(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  *sector_count = ext_csd.sec_count;
+
+  return kMmcStatusSuccess;
 }

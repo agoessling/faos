@@ -114,8 +114,13 @@ void Main(void) {
 
   // Setup MMC.
   assert(MmcInit(kMmc1, kMmcBusWidth8) == kMmcStatusSuccess);
-  // Use three sectors starting at 7e6 for test.
-  assert(MmcWriteReadTest(kMmc1, 7000000) == kMmcStatusSuccess);
+
+  // Test MMC.
+  uint32_t sector_count;
+  assert(MmcGetSectorCount(kMmc1, &sector_count) == kMmcStatusSuccess);
+  assert(sector_count > 7000000);  // Make sure to only use end of flash.
+  // Use last five sectors for test.
+  assert(MmcWriteReadTest(kMmc1, sector_count - 5) == kMmcStatusSuccess);
 
   bool led_state = false;
   while (true) {
