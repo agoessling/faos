@@ -11,7 +11,47 @@ typedef struct {
   bool check_device_status;
 } MmcCommandInfo;
 
-static const MmcCommandInfo kMmcCommandListing[57] = {
+static const MmcCommandInfo kMmcSdCommandListing[] = {
+  [0] = {.sd_cmd = {.INDX = 0, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 0, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [2] = {.sd_cmd = {.INDX = 2, .DP = 0, .CICE = 0, .CCCE = 1, .RSP_TYPE = 1, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [3] = {.sd_cmd = {.INDX = 3, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [6] = {.sd_cmd = {.INDX = 6, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
+         .check_device_status = true},
+  [7] = {.sd_cmd = {.INDX = 7, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+         .check_device_status = true},
+  [8] = {.sd_cmd = {.INDX = 8, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [9] = {.sd_cmd = {.INDX = 9, .DP = 0, .CICE = 0, .CCCE = 1, .RSP_TYPE = 1, .DDIR = 0, .BCE = 0},
+         .check_device_status = false},
+  [13] = {.sd_cmd = {.INDX = 13, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+  [17] = {.sd_cmd = {.INDX = 17, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 0},
+          .check_device_status = true},
+  [18] = {.sd_cmd = {.INDX = 18, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 1, .BCE = 1,
+                     .MSBS = 1, .ACEN = 1},
+          .check_device_status = true},
+  [23] = {.sd_cmd = {.INDX = 23, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+  [24] = {.sd_cmd = {.INDX = 24, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+  [25] = {.sd_cmd = {.INDX = 25, .DP = 1, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 1,
+                     .MSBS = 1, .ACEN = 1},
+          .check_device_status = true},
+  [55] = {.sd_cmd = {.INDX = 55, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = true},
+};
+
+static const MmcCommandInfo kMmcSdApplicationCommandListing[] = {
+  [6] = {.sd_cmd = {.INDX = 6, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+         .check_device_status = true},
+  [41] = {.sd_cmd = {.INDX = 41, .DP = 0, .CICE = 0, .CCCE = 0, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
+          .check_device_status = false},
+};
+
+static const MmcCommandInfo kMmcEmmcCommandListing[] = {
   [0] = {.sd_cmd = {.INDX = 0, .DP = 0, .CICE = 1, .CCCE = 1, .RSP_TYPE = 0, .DDIR = 0, .BCE = 0},
          .check_device_status = false},
   [1] = {.sd_cmd = {.INDX = 1, .DP = 0, .CICE = 0, .CCCE = 0, .RSP_TYPE = 2, .DDIR = 0, .BCE = 0},
@@ -48,6 +88,9 @@ static const MmcCommandInfo kMmcCommandListing[57] = {
           .check_device_status = true},
 };
 
+static const MmcCommandInfo kMmcEmmcApplicationCommandListing[] = {
+};
+
 typedef union {
   struct {
     uint32_t num_blocks : 16;
@@ -73,9 +116,70 @@ typedef union {
     uint32_t reserved1 : 6;
   };
   uint32_t raw;
-} MmcArgumentCmd6;
+} MmcEmmcArgumentCmd6;
 
-_Static_assert(sizeof(MmcArgumentCmd6) == 4, "Register size mismatch.");
+_Static_assert(sizeof(MmcEmmcArgumentCmd6) == 4, "Register size mismatch.");
+
+typedef union {
+  struct {
+    uint32_t access_mode : 4;
+    uint32_t command_system : 4;
+    uint32_t driver_strength : 4;
+    uint32_t power_limit : 4;
+    uint32_t func5 : 4;
+    uint32_t func6 : 4;
+    uint32_t reserved0 : 7;
+    uint32_t mode : 1;
+  };
+  uint32_t raw;
+} MmcSdArgumentCmd6;
+
+_Static_assert(sizeof(MmcSdArgumentCmd6) == 4, "Register size mismatch.");
+
+typedef union {
+  struct {
+    uint32_t bus_width : 2;
+    uint32_t reserved0 : 30;
+  };
+  uint32_t raw;
+} MmcArgumentACmd6;
+
+_Static_assert(sizeof(MmcArgumentACmd6) == 4, "Register size mismatch.");
+
+typedef union {
+  struct {
+    uint8_t reserved0[34];
+    uint16_t access_mode_busy;
+    uint16_t command_system_busy;
+    uint16_t drive_strength_busy;
+    uint16_t power_limit_busy;
+    uint16_t func5_busy;
+    uint16_t func6_busy;
+    uint8_t data_structure_version;
+    struct {
+      uint8_t access_mode_selection : 4;
+      uint8_t command_system_selection : 4;
+    };
+    struct {
+      uint8_t drive_strength_selection : 4;
+      uint8_t power_limit_selection : 4;
+    };
+    struct {
+      uint8_t func5_selection : 4;
+      uint8_t func6_selection : 4;
+    };
+    uint16_t access_mode_supported;
+    uint16_t command_system_supported;
+    uint16_t drive_strength_supported;
+    uint16_t power_limit_supported;
+    uint16_t func5_supported;
+    uint16_t func6_supported;
+    uint16_t maximum_power;
+  };
+  uint8_t bytes[64];
+} MmcSdSwitchStatus;
+
+_Static_assert(sizeof(MmcSdSwitchStatus) == 64, "Register size mismatch.");
 
 typedef union {
   struct {
@@ -100,6 +204,17 @@ typedef union {
     uint32_t reserved1 : 5;
     uint32_t access_mode : 2;
     uint32_t busy : 1;
+  };
+  // Differences in SD OCR.
+  struct {
+    uint32_t reserved2 : 24;
+    uint32_t s18a : 1;
+    uint32_t reserved3 : 2;
+    uint32_t co2t : 1;
+    uint32_t xpc : 1;
+    uint32_t uhs2_status : 1;
+    uint32_t ccs : 1;
+    uint32_t reserved5 : 1;
   };
   uint32_t raw;
 } MmcOcr;
@@ -158,12 +273,69 @@ static const MmcDeviceStatus kMmcDeviceStatusErrorBits = {
 };
 
 typedef union {
+  struct {
+    uint32_t check_pattern : 8;
+    uint32_t voltage_accepted : 4;
+    uint32_t pcie_response : 1;
+    uint32_t pcie_1v2_support : 1;
+    uint32_t reserved0 : 18;
+  };
+  uint32_t raw;
+} MmcInterfaceCondition;
+
+_Static_assert(sizeof(MmcInterfaceCondition) == 4, "Register size mismatch.");
+
+typedef union {
+  struct {
+    struct {
+      uint16_t reserved0 : 5;
+      uint16_t app_cmd : 1;
+      uint16_t exception_event : 1;
+      uint16_t switch_error : 1;
+      uint16_t ready_for_data : 1;
+      uint16_t current_state : 4;
+      uint16_t error : 1;
+      uint16_t illegal_command : 1;
+      uint16_t com_crc_error : 1;
+    };
+    uint16_t rca;
+  };
+  uint32_t raw;
+} MmcSdResponseR6;
+
+_Static_assert(sizeof(MmcSdResponseR6) == 4, "Register size mismatch.");
+
+typedef union {
   MmcOcr ocr;
   MmcDeviceStatus device_status;
+  MmcInterfaceCondition interface_condition;
+  MmcSdResponseR6 response_r6;
   uint32_t raw;
-} MmcResponseR1R3;
+} MmcResponse48Bit;
 
-_Static_assert(sizeof(MmcResponseR1R3) == 4, "Register size mismatch.");
+_Static_assert(sizeof(MmcResponse48Bit) == 4, "Register size mismatch.");
+
+typedef union {
+  // This struct requires __packed__ because of the unaligned nature of the fields.
+  struct __attribute__((__packed__)) {
+    struct {
+      uint8_t reserved0 : 1;
+      uint8_t crc : 7;
+    };
+    struct {
+      uint16_t mdt : 12;
+      uint16_t reserved1 : 4;
+    };
+    uint32_t psn;
+    uint8_t prv;
+    uint8_t pnm[5];
+    uint8_t oid[2];
+    uint8_t mid;
+  };
+  uint32_t words[4];
+} MmcSdCid;
+
+_Static_assert(sizeof(MmcSdCid) == 16, "Register size mismatch.");
 
 typedef union {
   // This struct requires __packed__ because of the unaligned nature of the fields.
@@ -184,6 +356,14 @@ typedef union {
     uint8_t mid;  // Manufacturer ID.
   };
   uint32_t words[4];
+} MmcEmmcCid;
+
+_Static_assert(sizeof(MmcEmmcCid) == 16, "Register size mismatch.");
+
+typedef union {
+  MmcSdCid sd;
+  MmcEmmcCid emmc;
+  uint32_t words[4];
 } MmcCid;
 
 _Static_assert(sizeof(MmcCid) == 16, "Register size mismatch.");
@@ -193,6 +373,53 @@ typedef union {
 } MmcCsr;
 
 _Static_assert(sizeof(MmcCsr) == 16, "Register size mismatch.");
+
+// Version 2.0 (SDHC and SDXC).
+typedef union {
+  // This struct requires __packed__ because of the unaligned nature of the fields.
+  struct __attribute__((__packed__)) {
+    struct {
+      uint32_t reserved0 : 1;
+      uint32_t crc : 7;
+      uint32_t reserved1 : 2;
+      uint32_t file_format : 2;
+      uint32_t tmp_write_protect : 1;
+      uint32_t perm_write_protect  : 1;
+      uint32_t copy : 1;
+      uint32_t file_format_grp : 1;
+      uint32_t reserved2 : 5;
+      uint32_t write_bl_partial  : 1;
+      uint32_t write_bl_len : 4;
+      uint32_t r2w_factor  : 3;
+      uint32_t reserved3 : 2;
+      uint32_t wp_grp_enable : 1;
+    };
+    struct {
+      uint64_t wp_grp_size : 7;
+      uint64_t erase_size : 7;
+      uint64_t erase_blk_en : 1;
+      uint64_t reserved4 : 1;
+      uint64_t c_size : 22;
+      uint64_t reserved5 : 6;
+      uint64_t dsr_imp : 1;
+      uint64_t read_blk_misalign : 1;
+      uint64_t write_blk_misalign : 1;
+      uint64_t read_bl_partial : 1;
+      uint64_t read_bl_len : 4;
+      uint64_t ccc : 12;
+    };
+    uint8_t tran_speed;
+    uint8_t nsac;
+    uint8_t taac;
+    struct {
+      uint8_t reserved6 : 6;
+      uint8_t csd_structure : 2;
+    };
+  };
+  uint32_t words[4];
+} MmcSdCsd;
+
+_Static_assert(sizeof(MmcSdCsd) == 16, "Register size mismatch.");
 
 typedef union {
   // This struct requires __packed__ because of the unaligned nature of the fields.
@@ -242,6 +469,14 @@ typedef union {
     };
   };
   uint32_t words[4];
+} MmcEmmcCsd;
+
+_Static_assert(sizeof(MmcEmmcCsd) == 16, "Register size mismatch.");
+
+typedef union {
+  MmcSdCsd sd;
+  MmcEmmcCsd emmc;
+  uint32_t words[4];
 } MmcCsd;
 
 _Static_assert(sizeof(MmcCsd) == 16, "Register size mismatch.");
@@ -251,9 +486,9 @@ typedef union {
   MmcCsr csr;
   MmcCsd csd;
   uint32_t words[4];
-} MmcResponseR2;
+} MmcResponse136Bit;
 
-_Static_assert(sizeof(MmcResponseR2) == 16, "Register size mismatch.");
+_Static_assert(sizeof(MmcResponse136Bit) == 16, "Register size mismatch.");
 
 typedef union {
   struct {

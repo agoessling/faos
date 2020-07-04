@@ -67,6 +67,12 @@ cc_library(
 )
 
 cc_library(
+    name = "macros",
+    hdrs = ["macros.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "clock",
     srcs = ["clock.c"],
     hdrs = ["clock.h"],
@@ -110,6 +116,7 @@ cc_library(
     deps = [
         ":assert",
         ":clock",
+        ":macros",
         ":time",
         "//src/autogen:registers",
     ],

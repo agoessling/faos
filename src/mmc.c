@@ -6,6 +6,7 @@
 #include "assert.h"
 #include "src/autogen/reg_def.h"
 #include "clock.h"
+#include "macros.h"
 #include "mmc_spec.h"
 #include "time.h"
 
@@ -15,8 +16,8 @@ static volatile PeripheralMMCHS2 *const kMmcPeripherals[kNumMmc] = {
   [kMmc2] = &MMCHS2,
 };
 
-static inline MmcResponseR2 MmcGetResponseR2(volatile PeripheralMMCHS2 *const mmc) {
-  MmcResponseR2 resp;
+static inline MmcResponse136Bit MmcGetResponse136Bit(volatile PeripheralMMCHS2 *const mmc) {
+  MmcResponse136Bit resp;
   resp.words[0] = mmc->SD_RSP10.raw;
   resp.words[1] = mmc->SD_RSP32.raw;
   resp.words[2] = mmc->SD_RSP54.raw;
@@ -25,11 +26,27 @@ static inline MmcResponseR2 MmcGetResponseR2(volatile PeripheralMMCHS2 *const mm
   return resp;
 }
 
-static inline MmcResponseR1R3 MmcGetResponseR1R3(volatile PeripheralMMCHS2 *const mmc) {
-  MmcResponseR1R3 resp;
+static inline MmcResponse48Bit MmcGetResponse48Bit(volatile PeripheralMMCHS2 *const mmc) {
+  MmcResponse48Bit resp;
   resp.raw = mmc->SD_RSP10.raw;
 
   return resp;
+}
+
+static MmcStatus MmcDecodeCmdError(volatile PeripheralMMCHS2 *const mmc) {
+  // First report command errors.
+  if (mmc->SD_STAT.CTO) return kMmcStatusCommandTimeout;
+  if (mmc->SD_STAT.CCRC) return kMmcStatusCommandCrcError;
+  if (mmc->SD_STAT.CIE) return kMmcStatusCommandIndexError;
+
+  // Then report data errors.
+  if (mmc->SD_STAT.DTO) return kMmcStatusDataTimeout;
+  if (mmc->SD_STAT.DCRC) return kMmcStatusDataCrcError;
+
+  // Unknown error.
+  if (mmc->SD_STAT.ERRI) return kMmcStatusError;
+
+  return kMmcStatusSuccess;
 }
 
 static inline MmcStatus MmcWaitBufferRead(volatile PeripheralMMCHS2 *const mmc) {
@@ -37,7 +54,7 @@ static inline MmcStatus MmcWaitBufferRead(volatile PeripheralMMCHS2 *const mmc) 
   while (!(mmc->SD_PSTATE.BRE || mmc->SD_STAT.ERRI)) {}
 
   if (mmc->SD_STAT.ERRI) {
-    return kMmcStatusError;
+    return MmcDecodeCmdError(mmc);
   }
 
   return kMmcStatusSuccess;
@@ -48,7 +65,7 @@ static inline MmcStatus MmcWaitBufferWrite(volatile PeripheralMMCHS2 *const mmc)
   while (!(mmc->SD_PSTATE.BWE || mmc->SD_STAT.ERRI)) {}
 
   if (mmc->SD_STAT.ERRI) {
-    return kMmcStatusError;
+    return MmcDecodeCmdError(mmc);
   }
 
   return kMmcStatusSuccess;
@@ -59,7 +76,7 @@ static inline MmcStatus MmcWaitTransferComplete(volatile PeripheralMMCHS2 *const
   while (!(mmc->SD_STAT.TC || mmc->SD_STAT.ERRI)) {}
 
   if (mmc->SD_STAT.ERRI) {
-    return kMmcStatusError;
+    return MmcDecodeCmdError(mmc);
   }
 
   return kMmcStatusSuccess;
@@ -82,11 +99,8 @@ static inline void MmcWriteBlockToBuffer(volatile PeripheralMMCHS2 *const mmc, u
   }
 }
 
-static MmcStatus MmcSendCmd(volatile PeripheralMMCHS2 *const mmc, uint32_t index,
+static MmcStatus MmcSendCmdRaw(volatile PeripheralMMCHS2 *const mmc, MmcCommandInfo cmd_info,
                                uint32_t argument) {
-  assert(index <= 56);
-  MmcCommandInfo cmd_info = kMmcCommandListing[index];
-
   mmc->SD_ARG.raw = argument;
 
   // Check if command in progress as well as data transfer if needed for particular command.
@@ -111,10 +125,42 @@ static MmcStatus MmcSendCmd(volatile PeripheralMMCHS2 *const mmc, uint32_t index
   while (!(mmc->SD_STAT.CC || mmc->SD_STAT.ERRI)) {}
 
   if (mmc->SD_STAT.ERRI) {
-    return kMmcStatusError;
+    return MmcDecodeCmdError(mmc);
   }
 
   return kMmcStatusSuccess;
+}
+
+static MmcStatus MmcSendCmd(MmcContext *context, uint32_t index, uint32_t argument) {
+  // Select command settings based on type of card.
+  MmcCommandInfo cmd_info;
+  if (context->type == kMmcTypeSd) {
+    assert(index <= ARRAY_SIZE(kMmcSdCommandListing));
+    cmd_info = kMmcSdCommandListing[index];
+  } else {  // kMmcTypeEmmc
+    assert(index <= ARRAY_SIZE(kMmcEmmcCommandListing));
+    cmd_info = kMmcEmmcCommandListing[index];
+  }
+
+  return MmcSendCmdRaw(context->mmc, cmd_info, argument);
+}
+
+static MmcStatus MmcSendACmd(MmcContext *context, uint32_t index, uint32_t argument) {
+  // Send CMD 55.
+  MmcStatus status = MmcSendCmd(context, 55, (uint32_t)context->relative_address << 16);
+  if (status != kMmcStatusSuccess) return status;
+
+  // Select application command settings based on type of card.
+  MmcCommandInfo cmd_info;
+  if (context->type == kMmcTypeSd) {
+    assert(index <= ARRAY_SIZE(kMmcSdApplicationCommandListing));
+    cmd_info = kMmcSdApplicationCommandListing[index];
+  } else {  // kMmcTypeEmmc
+    assert(index <= ARRAY_SIZE(kMmcEmmcApplicationCommandListing));
+    cmd_info = kMmcEmmcApplicationCommandListing[index];
+  }
+
+  return MmcSendCmdRaw(context->mmc, cmd_info, argument);
 }
 
 static void MmcSetBusFrequency(volatile PeripheralMMCHS2 *const mmc, float frequency) {
@@ -127,8 +173,20 @@ static void MmcSetBusFrequency(volatile PeripheralMMCHS2 *const mmc, float frequ
   mmc->SD_SYSCTL.CEN = 1;
 }
 
-static void MmcSetDataTimeout(volatile PeripheralMMCHS2 *const mmc, uint32_t taac, uint32_t nsac,
+static void MmcSetDataTimeout(MmcContext *context, uint32_t taac, uint32_t nsac,
                               uint32_t r2w_factor) {
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
+
+  float scaler;
+  if (context->type == kMmcTypeSd) {
+    // Maximum SD write time is 100x nominal write time.
+    scaler = 100.0f;
+  } else {  // kMmcTypeEmmc
+    // Specification says that maximum timeout time should be 10x nominal.  We choose 3x to keep the
+    // worst case delays reasonable.
+    scaler = 3.0f;
+  }
+
   // Maximum read cycles is 10 * (T_taac * F_input + 100 * nsac * F_input / F_output).
   // JEDEC 84-B51 6.15.7 Table 71.
   uint32_t unit_bits = taac & 0x07;
@@ -146,10 +204,7 @@ static void MmcSetDataTimeout(volatile PeripheralMMCHS2 *const mmc, uint32_t taa
   const float input_freq = ClockGet192Mhz() / 2;
   const float output_freq = input_freq / (float)mmc->SD_SYSCTL.CLKD;
 
-  // Specification says that maximum timeout time should be 10x nominal.  We choose 3x to keep the
-  // worst case delays reasonable.
-  // Loss of precision in this conversion doesn't affect us here.
-  float timeout_cycles_f = 3.0f * (taac_time + 100.0f * (float)nsac / output_freq) * input_freq;
+  float timeout_cycles_f = scaler * (taac_time + 100.0f * (float)nsac / output_freq) * input_freq;
   uint32_t timeout_cycles = (uint32_t)timeout_cycles_f;
 
   // Floor of log base 2.
@@ -170,23 +225,20 @@ static void MmcSetDataTimeout(volatile PeripheralMMCHS2 *const mmc, uint32_t taa
   mmc->SD_SYSCTL.DTO = (uint32_t)dto;
 }
 
-static MmcStatus MmcSendSwitchCmd(volatile PeripheralMMCHS2 *const mmc,
-                                     MmcArgumentCmd6 argument) {
-  MmcStatus status = MmcSendCmd(mmc, 6, argument.raw);
+static MmcStatus MmcEmmcSendSwitchCmd(MmcContext *context, MmcEmmcArgumentCmd6 argument) {
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
+
+  MmcStatus status = MmcSendCmd(context, 6, argument.raw);
   if (status != kMmcStatusSuccess) return status;
 
-  // Wait for the transfer to complete or an error to occur.
-  while (!(mmc->SD_STAT.TC || mmc->SD_STAT.ERRI)) {}
-
-  if (mmc->SD_STAT.ERRI) {
-    return kMmcStatusError;
-  }
-
-  // Check that SWITCH command (RCA 0x0001) succeeded.
-  status = MmcSendCmd(mmc, 13, 1 << 16);
+  status = MmcWaitTransferComplete(mmc);
   if (status != kMmcStatusSuccess) return status;
 
-  MmcResponseR1R3 r1 = MmcGetResponseR1R3(mmc);
+  // Check that SWITCH command succeeded.
+  status = MmcSendCmd(context, 13, (uint32_t)context->relative_address << 16);
+  if (status != kMmcStatusSuccess) return status;
+
+  MmcResponse48Bit r1 = MmcGetResponse48Bit(mmc);
   if (r1.device_status.switch_error) {
     return kMmcStatusError;
   }
@@ -194,25 +246,98 @@ static MmcStatus MmcSendSwitchCmd(volatile PeripheralMMCHS2 *const mmc,
   return kMmcStatusSuccess;
 }
 
-static MmcStatus MmcSetBusWidth(volatile PeripheralMMCHS2 *const mmc, MmcBusWidth bus_width) {
-  assert(bus_width == kMmcBusWidth1 || bus_width == kMmcBusWidth4 || bus_width == kMmcBusWidth8);
+static MmcStatus MmcSdEnableHsTiming(MmcContext *context) {
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
 
-  static const uint8_t bus_modes[] = {
-    [kMmcBusWidth1] = 0,
-    [kMmcBusWidth4] = 1,
-    [kMmcBusWidth8] = 2,
-  };
+  // Send CMD 6 (Switch function).
+  MmcSdArgumentCmd6 argument;
+  argument.raw = 0xFFFFFFFF;  // Default everything to no change.
+  argument.mode = 1; // Write.
+  argument.access_mode = 1; // 25MB/s
 
-  MmcExtCsdBusWidth bus_width_reg = {0};
-  bus_width_reg.bus_mode_selection = bus_modes[bus_width];
+  // Set block length to accommodate 512 bit switch status.
+  mmc->SD_BLK.BLEN = 64;
 
-  MmcArgumentCmd6 argument = {0};
-  argument.access = 3; // Write byte.
-  argument.index = offsetof(MmcExtCsd, bus_width);
-  argument.value = bus_width_reg.raw;
-
-  MmcStatus status = MmcSendSwitchCmd(mmc, argument);
+  MmcStatus status = MmcSendCmd(context, 6, argument.raw);
   if (status != kMmcStatusSuccess) return status;
+
+  status = MmcWaitBufferRead(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  MmcSdSwitchStatus switch_status;
+  for (int32_t i = 0; i < 16; ++i) {
+    uint32_t data = mmc->SD_DATA.raw;
+    // This is required because the status is transmitted as a single 512 bit block MSB first.
+    switch_status.bytes[63 - 4 * i - 0] = (uint8_t)((data >> 0) & 0xFF);
+    switch_status.bytes[63 - 4 * i - 1] = (uint8_t)((data >> 8) & 0xFF);
+    switch_status.bytes[63 - 4 * i - 2] = (uint8_t)((data >> 16) & 0xFF);
+    switch_status.bytes[63 - 4 * i - 3] = (uint8_t)((data >> 24) & 0xFF);
+  }
+
+  // Transfer should already be complete. Check for errors.
+  status = MmcWaitTransferComplete(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  mmc->SD_BLK.BLEN = kMmcBlockLength;
+
+  // Check that switch to high speed was successful.
+  if (switch_status.access_mode_selection != 1) {
+    return kMmcStatusError;
+  }
+
+  return kMmcStatusSuccess;
+}
+
+static MmcStatus MmcEmmcEnableHsTiming(MmcContext *context) {
+  MmcExtCsdHsTiming hs_timing = {0};
+  hs_timing.timing_interface = 1; // High speed operation.
+
+  MmcEmmcArgumentCmd6 argument = {0};
+  argument.access = 3; // Write byte.
+  argument.index = offsetof(MmcExtCsd, hs_timing);
+  argument.value = hs_timing.raw;
+
+  return MmcEmmcSendSwitchCmd(context, argument);
+}
+
+static MmcStatus MmcSetBusWidth(MmcContext *context, MmcBusWidth bus_width) {
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
+
+  if (context->type == kMmcTypeSd) {
+    assert(bus_width == kMmcBusWidth1 || bus_width == kMmcBusWidth4);
+
+    static const uint8_t bus_modes[] = {
+      [kMmcBusWidth1] = 0,
+      [kMmcBusWidth4] = 2,
+    };
+
+    MmcArgumentACmd6 argument = {0};
+    argument.bus_width = bus_modes[bus_width];
+
+    // Send ACMD 6 (Set bus width).
+    MmcStatus status = MmcSendACmd(context, 6, argument.raw);
+    if (status != kMmcStatusSuccess) return status;
+
+  } else {  // kMmcTypeEmmc
+    assert(bus_width == kMmcBusWidth1 || bus_width == kMmcBusWidth4 || bus_width == kMmcBusWidth8);
+
+    static const uint8_t bus_modes[] = {
+      [kMmcBusWidth1] = 0,
+      [kMmcBusWidth4] = 1,
+      [kMmcBusWidth8] = 2,
+    };
+
+    MmcExtCsdBusWidth bus_width_reg = {0};
+    bus_width_reg.bus_mode_selection = bus_modes[bus_width];
+
+    MmcEmmcArgumentCmd6 argument = {0};
+    argument.access = 3; // Write byte.
+    argument.index = offsetof(MmcExtCsd, bus_width);
+    argument.value = bus_width_reg.raw;
+
+    MmcStatus status = MmcEmmcSendSwitchCmd(context, argument);
+    if (status != kMmcStatusSuccess) return status;
+  }
 
   // Set host bus width.
   switch (bus_width) {
@@ -237,19 +362,9 @@ static MmcStatus MmcSetBusWidth(volatile PeripheralMMCHS2 *const mmc, MmcBusWidt
   return kMmcStatusSuccess;
 }
 
-static MmcStatus MmcEnableHsTiming(volatile PeripheralMMCHS2 *const mmc) {
-  MmcExtCsdHsTiming hs_timing = {0};
-  hs_timing.timing_interface = 1; // High speed operation.
+static MmcStatus MmcEmmcTestDataBus(MmcContext *context, MmcBusWidth bus_width) {
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
 
-  MmcArgumentCmd6 argument = {0};
-  argument.access = 3; // Write byte.
-  argument.index = offsetof(MmcExtCsd, hs_timing);
-  argument.value = hs_timing.raw;
-
-  return MmcSendSwitchCmd(mmc, argument);
-}
-
-static MmcStatus MmcTestDataBus(volatile PeripheralMMCHS2 *const mmc, MmcBusWidth bus_width) {
   assert(bus_width == kMmcBusWidth1 || bus_width == kMmcBusWidth4 || bus_width == kMmcBusWidth8);
 
   uint32_t data;
@@ -274,7 +389,7 @@ static MmcStatus MmcTestDataBus(volatile PeripheralMMCHS2 *const mmc, MmcBusWidt
       break;
   }
 
-  MmcStatus status = MmcSendCmd(mmc, 19, 0);
+  MmcStatus status = MmcSendCmd(context, 19, 0);
   if (status != kMmcStatusSuccess) return status;
 
   // Wait to write data.
@@ -294,7 +409,7 @@ static MmcStatus MmcTestDataBus(volatile PeripheralMMCHS2 *const mmc, MmcBusWidt
   while (!mmc->SD_SYSCTL.SRD) {}
   while (mmc->SD_SYSCTL.SRD) {}
 
-  status = MmcSendCmd(mmc, 14, 0);
+  status = MmcSendCmd(context, 14, 0);
   if (status != kMmcStatusSuccess) return status;
 
   // Wait to read data.
@@ -331,7 +446,7 @@ static MmcStatus MmcTestDataBus(volatile PeripheralMMCHS2 *const mmc, MmcBusWidt
   return kMmcStatusSuccess;
 }
 
-MmcStatus MmcWriteReadTest(Mmc mmc_num, uint32_t sector_address) {
+MmcStatus MmcWriteReadTest(MmcContext *context, uint32_t sector_address) {
   // Use 2kB on stack for test.
   uint8_t data[4 * kMmcBlockLength];
 
@@ -343,13 +458,13 @@ MmcStatus MmcWriteReadTest(Mmc mmc_num, uint32_t sector_address) {
     data[i] = (uint8_t)(i + 10 + offset);
   }
 
-  MmcStatus status = MmcWriteBlock(mmc_num, sector_address, data);
+  MmcStatus status = MmcWriteBlock(context, sector_address, data);
   if (status != kMmcStatusSuccess) return status;
 
   // Reset data.
   memset(data, 0, (uint32_t)kMmcBlockLength);
 
-  status = MmcReadBlock(mmc_num, sector_address, data);
+  status = MmcReadBlock(context, sector_address, data);
   if (status != kMmcStatusSuccess) return status;
 
   // Check data for index.
@@ -364,14 +479,14 @@ MmcStatus MmcWriteReadTest(Mmc mmc_num, uint32_t sector_address) {
     data[i] = (uint8_t)(i + 23 + offset);
   }
 
-  status = MmcWriteMultipleBlocks(mmc_num, sector_address + 1,
+  status = MmcWriteMultipleBlocks(context, sector_address + 1,
                                   (int32_t)sizeof(data) / kMmcBlockLength, data);
   if (status != kMmcStatusSuccess) return status;
 
   // Reset data.
   memset(data, 0, sizeof(data));
 
-  status = MmcReadMultipleBlocks(mmc_num, sector_address + 1,
+  status = MmcReadMultipleBlocks(context, sector_address + 1,
                                  (int32_t)sizeof(data) / kMmcBlockLength, data);
   if (status != kMmcStatusSuccess) return status;
 
@@ -385,8 +500,34 @@ MmcStatus MmcWriteReadTest(Mmc mmc_num, uint32_t sector_address) {
   return kMmcStatusSuccess;
 }
 
-MmcStatus MmcInit(Mmc mmc_num, MmcBusWidth bus_width) {
+static MmcStatus MmcEmmcGetSectorCount(MmcContext *context, uint32_t *sector_count) {
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
+
+  MmcStatus status = MmcSendCmd(context, 8, 0);
+  if (status != kMmcStatusSuccess) return status;
+
+  // Wait to read data.  Blocks on device read.
+  status = MmcWaitBufferRead(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  // Place fairly large buffer (512B) on stack.
+  MmcExtCsd ext_csd;
+  MmcReadBlockFromBuffer(mmc, ext_csd.bytes);
+
+  // Transfer should already be complete. Check for errors.
+  status = MmcWaitTransferComplete(mmc);
+  if (status != kMmcStatusSuccess) return status;
+
+  *sector_count = ext_csd.sec_count;
+
+  return kMmcStatusSuccess;
+}
+
+MmcStatus MmcInit(MmcContext *context, Mmc mmc_num, MmcBusWidth bus_width) {
   assert(0 <= mmc_num && mmc_num < kNumMmc);
+
+  // Mark context as uninitialized.
+  context->initialized = 0;
 
   // Enable relevant clocks.
   switch (mmc_num) {
@@ -413,6 +554,8 @@ MmcStatus MmcInit(Mmc mmc_num, MmcBusWidth bus_width) {
   }
 
   volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
+  context->mmc = mmc; // Save peripheral pointer in context.
+
   mmc->SD_SYSCONFIG.SOFTRESET = 1;
   while (!mmc->SD_SYSSTATUS.RESETDONE) {}
 
@@ -443,86 +586,211 @@ MmcStatus MmcInit(Mmc mmc_num, MmcBusWidth bus_width) {
   // Set clock frequency to 400kHz (initialization frequency).
   MmcSetBusFrequency(mmc, 400e3f);
 
+  // Assume that is an SD card for now.
+  context->type = kMmcTypeSd;
+
   // Send CMD 0 (Go idle).
   MmcStatus status;
-  status = MmcSendCmd(mmc, 0, 0);
+  status = MmcSendCmd(context, 0, 0);
   if (status  != kMmcStatusSuccess) return status;
 
-  // Send CMD 1 (Get operating conditions).
-  MmcOcr ocr = {0};
-  ocr.voltage_3v2to3v3 = 1;
-  ocr.voltage_3v3to3v4 = 1;
-  ocr.access_mode = 2;  // Sector address capable.
+  // Send CMD 8 (Send interface operating conditions).
+  // This assumes that all SD cards are >=Ver2.00.
+  // Only SD cards should respond to this.
+  MmcInterfaceCondition if_cond = {0};
+  if_cond.voltage_accepted = 1;  // 3.3V supply.
 
-  // Wait for not busy.
-  MmcResponseR1R3 r3;
-  do {
-    status = MmcSendCmd(mmc, 1, ocr.raw);
-    if (status != kMmcStatusSuccess) return status;
-    r3 = MmcGetResponseR1R3(mmc);
-  } while (!r3.ocr.busy);  // Busy is inverted.
+  status = MmcSendCmd(context, 8, if_cond.raw);
 
-  // Verify our assumption sector addressing mode (>2GB).
-  if (r3.ocr.access_mode != 2) {
-    return kMmcStatusError;
+  if (status == kMmcStatusSuccess) {
+    context->type = kMmcTypeSd;
+
+    MmcResponse48Bit r7 = MmcGetResponse48Bit(mmc);
+    if (r7.interface_condition.voltage_accepted != 1) {
+      return kMmcStatusError;
+    }
+  } else if (status == kMmcStatusCommandTimeout) {
+    context->type = kMmcTypeEmmc;
+
+    // Reset command lines from error.
+    mmc->SD_SYSCTL.SRC = 1;
+    while (!mmc->SD_SYSCTL.SRC) {};
+    while (mmc->SD_SYSCTL.SRC) {};
+  } else {
+    return kMmcStatusUnknownCard;
+  }
+
+  // Initialize cards.
+  if (context->type == kMmcTypeSd) {
+    // Send ACMD 41 (Get operating conditions).
+    MmcOcr ocr = {0};
+    ocr.voltage_3v2to3v3 = 1;
+    ocr.voltage_3v3to3v4 = 1;
+    ocr.xpc = 1;  // Allow high power mode.
+    ocr.ccs = 1;  // Sector address capable.
+
+    // Use RCA = 0 for initialization.
+    context->relative_address = 0;
+
+    // Wait for not busy.
+    int64_t start = TimeGetUs();
+    MmcResponse48Bit r3;
+    do {
+      // Timeout in 1 second.
+      if (TimeGetUs() - start > (int64_t)1e6) {
+        return kMmcStatusInitTimeout;
+      }
+
+      status = MmcSendACmd(context, 41, ocr.raw);
+      if (status != kMmcStatusSuccess) return status;
+
+      r3 = MmcGetResponse48Bit(mmc);
+    } while (!r3.ocr.busy);  // Busy is inverted.
+
+    // Verify our assumption of sector addressing mode (>2GB).
+    if (r3.ocr.ccs != 1) {
+      return kMmcStatusError;
+    }
+  } else {  // kMmcTypeEmmc
+    // Send CMD 1 (Get operating conditions).
+    MmcOcr ocr = {0};
+    ocr.voltage_3v2to3v3 = 1;
+    ocr.voltage_3v3to3v4 = 1;
+    ocr.access_mode = 2;  // Sector address capable.
+
+    // Wait for not busy.
+    int64_t start = TimeGetUs();
+    MmcResponse48Bit r3;
+    do {
+      // Timeout in 1 second.
+      if (TimeGetUs() - start > (int64_t)1e6) {
+        return kMmcStatusInitTimeout;
+      }
+
+      status = MmcSendCmd(context, 1, ocr.raw);
+      if (status != kMmcStatusSuccess) return status;
+
+      r3 = MmcGetResponse48Bit(mmc);
+    } while (!r3.ocr.busy);  // Busy is inverted.
+
+    // Verify our assumption sector addressing mode (>2GB).
+    if (r3.ocr.access_mode != 2) {
+      return kMmcStatusError;
+    }
   }
 
   // Send CMD 2 (Send CID).
-  status = MmcSendCmd(mmc, 2, 0);
-  if (status != kMmcStatusSuccess) return status;
+  status = MmcSendCmd(context, 2, 0);
+  if (status  != kMmcStatusSuccess) return status;
 
-  // Send CMD 3 (Set relative address) with 0x0001 RCA.
-  status = MmcSendCmd(mmc, 3, 1 << 16);
-  if (status != kMmcStatusSuccess) return status;
+  // Send CMD 3 (Set relative address).
+  // For SD cards the card provides the RCA and the argument is empty.  For eMMC RCA is set.
+  if (context->type == kMmcTypeSd) {
+    context->relative_address = 0;  // Use empty argument.
+  } else { // kMmcTypeEmmc
+    context->relative_address = 1;
+  }
+
+  status = MmcSendCmd(context, 3, (uint32_t)context->relative_address << 16);
+  if (status  != kMmcStatusSuccess) return status;
+
+  // SD cards respond with assigned RCA.
+  if (context->type == kMmcTypeSd) {
+    MmcResponse48Bit r6 = MmcGetResponse48Bit(mmc);
+    context->relative_address = r6.response_r6.rca;
+  }
 
   // Send CMD 9 (Send CSD).
-  status = MmcSendCmd(mmc, 9, 1 << 16);
+  status = MmcSendCmd(context, 9, (uint32_t)context->relative_address << 16);
   if (status != kMmcStatusSuccess) return status;
-  MmcResponseR2 r2 = MmcGetResponseR2(mmc);
-  MmcCsd csd = r2.csd;
+  MmcResponse136Bit r2 = MmcGetResponse136Bit(mmc);
+
+  uint32_t read_len;
+  uint32_t write_len;
+  if (context->type == kMmcTypeSd) {
+    read_len = r2.csd.sd.read_bl_len;
+    write_len = r2.csd.sd.write_bl_len;
+  } else { // kMmcTypeEmmc
+    read_len = r2.csd.emmc.read_bl_len;
+    write_len = r2.csd.emmc.write_bl_len;
+  }
 
   // Block size is assumed to be 512.  This takes advantage of the data double buffer.
-  if (csd.read_bl_len != 9 || csd.write_bl_len != 9) {  // 2^9 = 512
+  if (read_len != 9 || write_len != 9) {  // 2^9 = 512
     return kMmcStatusIncorrectBlockLength;
   }
   mmc->SD_BLK.BLEN = kMmcBlockLength;
 
   // Send CMD 7 (Select card).
-  status = MmcSendCmd(mmc, 7, 1 << 16);
+  status = MmcSendCmd(context, 7, (uint32_t)context->relative_address << 16);
   if (status != kMmcStatusSuccess) return status;
 
-  status = MmcSetBusWidth(mmc, bus_width);
+  // Set bus width.
+  status = MmcSetBusWidth(context, bus_width);
   if (status != kMmcStatusSuccess) return status;
 
-  // Set bus frequency based on device version >= v4.1.
-  if (csd.spec_vers == 4) {
-    status = MmcEnableHsTiming(mmc);
+  // Set operating speed.
+  if (context->type == kMmcTypeSd) {
+    // All SD cards >=Ver2.0 support 25MB/s (50MHz).
+    status = MmcSdEnableHsTiming(context);
     if (status != kMmcStatusSuccess) return status;
-
+    MmcSetBusFrequency(mmc, 50e6f);
+  } else {  // kMmcTypeEmmc
+    // Only support eMMC with device version >= v4.1 which in turn supports 52MHz.
+    if (r2.csd.emmc.spec_vers != 4) {
+      return kMmcStatusUnknownCard;
+    }
+    status = MmcEmmcEnableHsTiming(context);
+    if (status != kMmcStatusSuccess) return status;
     MmcSetBusFrequency(mmc, 52e6f);
-  } else {  // < v4.1
-    MmcSetBusFrequency(mmc, 20e6f);
   }
 
   // Set data timeout based on CSD values.
-  MmcSetDataTimeout(mmc, csd.taac, csd.nsac, csd.r2w_factor);
+  uint32_t taac;
+  uint32_t nsac;
+  uint32_t r2w_factor;
+  if (context->type == kMmcTypeSd) {
+    taac = r2.csd.sd.taac;
+    nsac = r2.csd.sd.nsac;
+    r2w_factor = r2.csd.sd.r2w_factor;
+  } else { // kMmcTypeEmmc
+    taac = r2.csd.emmc.taac;
+    nsac = r2.csd.emmc.nsac;
+    r2w_factor = r2.csd.emmc.r2w_factor;
+  }
+  MmcSetDataTimeout(context, taac, nsac, r2w_factor);
 
-  status = MmcTestDataBus(mmc, bus_width);
-  if (status != kMmcStatusSuccess) return status;
+  // Test the data bus if eMMC.
+  if (context->type == kMmcTypeEmmc) {
+    status = MmcEmmcTestDataBus(context, bus_width);
+    if (status != kMmcStatusSuccess) return status;
+  }
+
+  // Store total number of sectors in context.
+  // This comes after all the initialization because eMMC uses a data transfer to get ExtCSD.
+  if (context->type == kMmcTypeSd) {
+    context->sector_count = ((uint32_t)r2.csd.sd.c_size + 1) * 1024;
+  } else {  // kMmcTypeEmmc
+    status = MmcEmmcGetSectorCount(context, &context->sector_count);
+    if (status != kMmcStatusSuccess) return status;
+  }
+
+  // Mark context as initialized.
+  context->initialized = kMmcInitializedValue;
 
   return kMmcStatusSuccess;
 }
 
-MmcStatus MmcWriteMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t num_sectors,
-                                    uint8_t *data) {
-  assert(0 <= mmc_num && mmc_num < kNumMmc);
+MmcStatus MmcWriteMultipleBlocks(MmcContext *context, uint32_t sector_address, int32_t num_sectors,
+                                 uint8_t *data) {
+  assert(context->initialized == kMmcInitializedValue);
   assert(1 <= num_sectors && num_sectors < 1 << 16);
-  volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
 
   mmc->SD_BLK.NBLK = num_sectors;
 
   // Currently assume memory is >2GB so the address is the sector address.
-  MmcStatus status = MmcSendCmd(mmc, 25, sector_address);
+  MmcStatus status = MmcSendCmd(context, 25, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
   for (int32_t sector = 0; sector < num_sectors; ++sector) {
@@ -546,16 +814,16 @@ MmcStatus MmcWriteMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t n
   return kMmcStatusSuccess;
 }
 
-MmcStatus MmcReadMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t num_sectors,
-                                   uint8_t *data) {
-  assert(0 <= mmc_num && mmc_num < kNumMmc);
+MmcStatus MmcReadMultipleBlocks(MmcContext *context, uint32_t sector_address, int32_t num_sectors,
+                                uint8_t *data) {
+  assert(context->initialized == kMmcInitializedValue);
   assert(1 <= num_sectors && num_sectors < 1 << 16);
-  volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
 
   mmc->SD_BLK.NBLK = num_sectors;
 
   // Currently assume memory is >2GB so the address is the sector address.
-  MmcStatus status = MmcSendCmd(mmc, 18, sector_address);
+  MmcStatus status = MmcSendCmd(context, 18, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
   for (int32_t sector = 0; sector < num_sectors; ++sector) {
@@ -579,12 +847,12 @@ MmcStatus MmcReadMultipleBlocks(Mmc mmc_num, uint32_t sector_address, int32_t nu
   return kMmcStatusSuccess;
 }
 
-MmcStatus MmcWriteBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
-  assert(0 <= mmc_num && mmc_num < kNumMmc);
-  volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
+MmcStatus MmcWriteBlock(MmcContext *context, uint32_t sector_address, uint8_t *data) {
+  assert(context->initialized == kMmcInitializedValue);
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
 
   // Currently assume memory is >2GB so the address is the sector address.
-  MmcStatus status = MmcSendCmd(mmc, 24, sector_address);
+  MmcStatus status = MmcSendCmd(context, 24, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
   // Wait to write data.
@@ -597,12 +865,12 @@ MmcStatus MmcWriteBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
   return MmcWaitTransferComplete(mmc);
 }
 
-MmcStatus MmcReadBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
-  assert(0 <= mmc_num && mmc_num < kNumMmc);
-  volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
+MmcStatus MmcReadBlock(MmcContext *context, uint32_t sector_address, uint8_t *data) {
+  assert(context->initialized == kMmcInitializedValue);
+  volatile PeripheralMMCHS2 *const mmc = context->mmc;
 
   // Currently assume memory is >2GB so the address is the sector address.
-  MmcStatus status = MmcSendCmd(mmc, 17, sector_address);
+  MmcStatus status = MmcSendCmd(context, 17, sector_address);
   if (status != kMmcStatusSuccess) return status;
 
   // Wait to read data.  Blocks on device read.
@@ -613,28 +881,4 @@ MmcStatus MmcReadBlock(Mmc mmc_num, uint32_t sector_address, uint8_t *data) {
 
   // Transfer should already be complete. Check for errors.
   return MmcWaitTransferComplete(mmc);
-}
-
-MmcStatus MmcGetSectorCount(Mmc mmc_num, uint32_t *sector_count) {
-  assert(0 <= mmc_num && mmc_num < kNumMmc);
-  volatile PeripheralMMCHS2 *const mmc = kMmcPeripherals[mmc_num];
-
-  MmcStatus status = MmcSendCmd(mmc, 8, 0);
-  if (status != kMmcStatusSuccess) return status;
-
-  // Wait to read data.  Blocks on device read.
-  status = MmcWaitBufferRead(mmc);
-  if (status != kMmcStatusSuccess) return status;
-
-  // Place fairly large buffer (512B) on stack.
-  MmcExtCsd ext_csd;
-  MmcReadBlockFromBuffer(mmc, ext_csd.bytes);
-
-  // Transfer should already be complete. Check for errors.
-  status = MmcWaitTransferComplete(mmc);
-  if (status != kMmcStatusSuccess) return status;
-
-  *sector_count = ext_csd.sec_count;
-
-  return kMmcStatusSuccess;
 }

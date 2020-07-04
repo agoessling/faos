@@ -45,6 +45,26 @@ static void BoardInit(void) {
   CONTROL_MODULE.CONF_I2C0_SCL.PUDEN = 0;
   CONTROL_MODULE.CONF_I2C0_SCL.MMODE = 0;
 
+  // MMC0.
+  CONTROL_MODULE.CONF_MMC0_DAT0.SLEWCTRL = 0;
+  CONTROL_MODULE.CONF_MMC0_DAT1.SLEWCTRL = 0;
+  CONTROL_MODULE.CONF_MMC0_DAT2.SLEWCTRL = 0;
+  CONTROL_MODULE.CONF_MMC0_DAT3.SLEWCTRL = 0;
+  CONTROL_MODULE.CONF_MMC0_CLK.SLEWCTRL = 0;
+  CONTROL_MODULE.CONF_MMC0_CMD.SLEWCTRL = 0;
+  CONTROL_MODULE.CONF_MMC0_DAT0.PUDEN = 1;
+  CONTROL_MODULE.CONF_MMC0_DAT1.PUDEN = 1;
+  CONTROL_MODULE.CONF_MMC0_DAT2.PUDEN = 1;
+  CONTROL_MODULE.CONF_MMC0_DAT3.PUDEN = 1;
+  CONTROL_MODULE.CONF_MMC0_CLK.PUDEN = 1;
+  CONTROL_MODULE.CONF_MMC0_CMD.PUDEN = 1;
+  CONTROL_MODULE.CONF_MMC0_DAT0.MMODE = 0;
+  CONTROL_MODULE.CONF_MMC0_DAT1.MMODE = 0;
+  CONTROL_MODULE.CONF_MMC0_DAT2.MMODE = 0;
+  CONTROL_MODULE.CONF_MMC0_DAT3.MMODE = 0;
+  CONTROL_MODULE.CONF_MMC0_CLK.MMODE = 0;
+  CONTROL_MODULE.CONF_MMC0_CMD.MMODE = 0;
+
   // MMC1.
   CONTROL_MODULE.CONF_GPMC_AD0.SLEWCTRL = 0;  // DATA[0:7]
   CONTROL_MODULE.CONF_GPMC_AD1.SLEWCTRL = 0;
@@ -113,15 +133,25 @@ void Main(void) {
   Ddr3Init();
 
   // Setup MMC.
-  assert(MmcInit(kMmc1, kMmcBusWidth8) == kMmcStatusSuccess);
+  MmcContext sd;
+  MmcContext emmc;
+  assert(MmcInit(&sd, kMmc0, kMmcBusWidth4) == kMmcStatusSuccess);
+  assert(MmcInit(&emmc, kMmc1, kMmcBusWidth8) == kMmcStatusSuccess);
 
   // Test MMC.
   uint32_t sector_count;
-  assert(MmcGetSectorCount(kMmc1, &sector_count) == kMmcStatusSuccess);
+
+  sector_count = MmcGetSectorCount(&sd);
   assert(sector_count > 7000000);  // Make sure to only use end of flash.
   // Use last five sectors for test.
-  assert(MmcWriteReadTest(kMmc1, sector_count - 5) == kMmcStatusSuccess);
+  assert(MmcWriteReadTest(&sd, sector_count - 5) == kMmcStatusSuccess);
 
+  sector_count = MmcGetSectorCount(&emmc);
+  assert(sector_count > 7000000);  // Make sure to only use end of flash.
+  // Use last five sectors for test.
+  assert(MmcWriteReadTest(&emmc, sector_count - 5) == kMmcStatusSuccess);
+
+  // Sanity LEDs.
   bool led_state = false;
   while (true) {
     BoardSetLed(1, led_state);

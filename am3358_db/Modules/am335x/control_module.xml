@@ -2897,123 +2897,123 @@
   </register>
   
   
-  <register acronym="conf_mmc0_dat_0" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat_0" offset="0x8F0" width="32">
+  <register acronym="conf_mmc0_dat0" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat0" offset="0x8F0" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"></bitfield>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"></bitfield>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_datx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_dat_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"></bitenum>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"></bitenum>
   </bitfield>
     
-  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_datx_rxactive" rwaccess="RW" width="1">
+  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_dat_rxactive" rwaccess="RW" width="1">
     <bitenum description="Receiver enabled" id="en_2_0x1" token="en_2_0x1" value="0x1"></bitenum>
     <bitenum description="Receiver disabled" id="en_1_0x0" token="en_1_0x0" value="0x0"></bitenum>
   </bitfield>
     
-  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_datx_putypesel" rwaccess="RW" width="1">
+  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_dat_putypesel" rwaccess="RW" width="1">
     <bitenum description="Pullup selected" id="en_2_0x1" token="en_2_0x1" value="0x1"></bitenum>
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"></bitenum>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_datx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_dat_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"></bitenum>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"></bitenum>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_datx_mmode" rwaccess="RW" width="3"></bitfield>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_dat_mmode" rwaccess="RW" width="3"></bitfield>
   </register>
   
   
-  <register acronym="conf_mmc0_dat_1" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat_1" offset="0x8F4" width="32">
+  <register acronym="conf_mmc0_dat1" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat1" offset="0x8F4" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"/>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_datx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_dat_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_datx_rxactive" rwaccess="RW" width="1">
+  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_dat_rxactive" rwaccess="RW" width="1">
     <bitenum description="Receiver enabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Receiver disabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_datx_putypesel" rwaccess="RW" width="1">
+  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_dat_putypesel" rwaccess="RW" width="1">
     <bitenum description="Pullup selected" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_datx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_dat_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_datx_mmode" rwaccess="RW" width="3"/>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_dat_mmode" rwaccess="RW" width="3"/>
   </register>
   
   
-  <register acronym="conf_mmc0_dat_2" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat_2" offset="0x8F8" width="32">
+  <register acronym="conf_mmc0_dat2" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat2" offset="0x8F8" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"/>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_datx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_dat_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_datx_rxactive" rwaccess="RW" width="1">
+  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_dat_rxactive" rwaccess="RW" width="1">
     <bitenum description="Receiver enabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Receiver disabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_datx_putypesel" rwaccess="RW" width="1">
+  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_dat_putypesel" rwaccess="RW" width="1">
     <bitenum description="Pullup selected" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_datx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_dat_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_datx_mmode" rwaccess="RW" width="3"/>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_dat_mmode" rwaccess="RW" width="3"/>
   </register>
   
   
-  <register acronym="conf_mmc0_dat_3" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat_3" offset="0x8FC" width="32">
+  <register acronym="conf_mmc0_dat3" description="See the device datasheet for information on default pin mux configurations. Note that the device ROM may change the default pin mux for certain pins based on the SYSBOOT mode settings." id="conf_mmc0_dat3" offset="0x8FC" width="32">
     
   <bitfield begin="31" description="" end="20" id="Reserved1" rwaccess="R" width="12"/>
     
   <bitfield begin="19" description="" end="7" id="Reserved2" rwaccess="R" width="13"/>
     
-  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_datx_slewctrl" rwaccess="RW" width="1">
+  <bitfield begin="6" description="Select between faster or slower slew rate Reset value is pad-dependent." end="6" id="conf_mmc0_dat_slewctrl" rwaccess="RW" width="1">
     <bitenum description="Slow" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Fast" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_datx_rxactive" rwaccess="RW" width="1">
+  <bitfield begin="5" description="Input enable value for the PAD" end="5" id="conf_mmc0_dat_rxactive" rwaccess="RW" width="1">
     <bitenum description="Receiver enabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Receiver disabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_datx_putypesel" rwaccess="RW" width="1">
+  <bitfield begin="4" description="Pad pullup/pulldown type selection Reset value is pad-dependent." end="4" id="conf_mmc0_dat_putypesel" rwaccess="RW" width="1">
     <bitenum description="Pullup selected" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pulldown selected" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_datx_puden" rwaccess="RW" width="1">
+  <bitfield begin="3" description="Pad pullup/pulldown enable Reset value is pad-dependent." end="3" id="conf_mmc0_dat_puden" rwaccess="RW" width="1">
     <bitenum description="Pullup/pulldown disabled" id="en_2_0x1" token="en_2_0x1" value="0x1"/>
     <bitenum description="Pullup/pulldown enabled" id="en_1_0x0" token="en_1_0x0" value="0x0"/>
   </bitfield>
     
-  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_datx_mmode" rwaccess="RW" width="3"/>
+  <bitfield begin="2" description="Pad functional signal mux select. Reset value is pad-dependent." end="0" id="conf_mmc0_dat_mmode" rwaccess="RW" width="3"/>
   </register>
   
   
