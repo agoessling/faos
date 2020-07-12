@@ -1,26 +1,11 @@
 load("@rules_cc//cc:defs.bzl", "cc_toolchain_suite")
 
-config_setting(
-    name = "arm_none_compatible",
-    constraint_values = [
-        "@platforms//cpu:arm",
-        "@platforms//os:none",
-    ],
-)
-
 platform(
     name = "arm_none_generic",
     constraint_values = [
         "@platforms//cpu:arm",
         "@platforms//os:none",
     ],
-)
-
-cc_toolchain_suite(
-    name = "toolchain",
-    toolchains = {
-        "k8": ":cc_toolchain_arm_none_eabi",
-    },
 )
 
 cc_toolchain(
