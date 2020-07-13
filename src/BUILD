@@ -73,6 +73,23 @@ cc_library(
 )
 
 cc_library(
+    name = "crc",
+    srcs = ["crc.c"],
+    hdrs = ["crc.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "test_crc",
+    srcs = ["test_crc.c"],
+    deps = [
+        ":crc",
+        "@unity//:unity",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "clock",
     srcs = ["clock.c"],
     hdrs = ["clock.h"],
