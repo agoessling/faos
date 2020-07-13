@@ -57,6 +57,8 @@ def _impl(ctx):
         "-isystem",
         "external/arm_none_eabi/lib/gcc/arm-none-eabi/9.2.1/include",
         "-isystem",
+        "external/arm_none_eabi/lib/gcc/arm-none-eabi/9.2.1/include-fixed",
+        "-isystem",
         "external/arm_none_eabi/arm-none-eabi/include",
     ]
 
