@@ -6,6 +6,13 @@ usb_boot(
     visibility = ["//visibility:public"],
 )
 
+test_suite(
+    name = "all_tests",
+    tests = [
+        ":test_crc",
+    ],
+)
+
 py_binary(
     name = "generate_reg_def",
     srcs = ["generate_reg_def.py"],
@@ -86,6 +93,7 @@ cc_test(
         ":crc",
         "@unity//:unity",
     ],
+    size = "small",
     visibility = ["//visibility:public"],
 )
 
