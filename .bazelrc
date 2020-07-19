@@ -1,6 +1,10 @@
+common:host --platforms=@local_config_platform//:host
+common:bbb --platforms=//toolchain:arm_none_generic
+
 build --incompatible_enable_cc_toolchain_resolution
 build --platforms=//toolchain:arm_none_generic  # Default to building for target.
 build -c dbg
 
+test --incompatible_enable_cc_toolchain_resolution
 test --test_output=errors
 test --platforms=@local_config_platform//:host  # Tests are currently only on host.
