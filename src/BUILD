@@ -9,6 +9,7 @@ usb_boot(
 test_suite(
     name = "all_tests",
     tests = [
+        ":test_cobs",
         ":test_crc",
     ],
 )
@@ -91,6 +92,25 @@ cc_test(
     srcs = ["test_crc.c"],
     deps = [
         ":crc",
+        "@unity//:unity",
+    ],
+    size = "small",
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "cobs",
+    srcs = ["cobs.c"],
+    hdrs = ["cobs.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "test_cobs",
+    srcs = ["test_cobs.c"],
+    deps = [
+        ":cobs",
+        ":macros",
         "@unity//:unity",
     ],
     size = "small",
