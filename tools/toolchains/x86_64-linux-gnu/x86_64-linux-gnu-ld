@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+# exec -a is required for toolchain wrapper and standard library search.
+exec -a x86_64-linux-ld external/x86_64_linux_gnu/bin/x86_64-linux-ld "$@"

@@ -2,12 +2,13 @@ workspace(name = 'faos')
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-load("//tools/toolchains/arm-none-eabi:arm_none_eabi_deps.bzl", "arm_none_eabi_deps")
+load("//tools/toolchains:toolchains.bzl", "toolchain_deps")
 
-arm_none_eabi_deps()
+toolchain_deps()
 
 register_toolchains(
     "//tools/toolchains:arm_none_eabi",
+    "//tools/toolchains:x86_64_linux_gnu",
 )
 
 http_archive(

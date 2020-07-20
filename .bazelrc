@@ -1,4 +1,4 @@
-common:host --platforms=@local_config_platform//:host
+common:host --platforms=//tools/toolchains:x86_64_linux_generic
 common:bbb --platforms=//tools/toolchains:arm_none_generic
 
 build --incompatible_enable_cc_toolchain_resolution
@@ -7,4 +7,5 @@ build -c dbg
 
 test --incompatible_enable_cc_toolchain_resolution
 test --test_output=errors
-test --platforms=@local_config_platform//:host  # Tests are currently only on host.
+test --platforms=//tools/toolchains:x86_64_linux_generic  # Tests are currently only on host.
+test -c dbg

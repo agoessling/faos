@@ -2,59 +2,59 @@ package(default_visibility = ['//visibility:public'])
 
 filegroup(
     name = "ar",
-    srcs = ["bin/arm-none-eabi-ar"],
+    srcs = ["bin/x86_64-linux-ar"],
 )
 
 filegroup(
     name = "as",
-    srcs = ["bin/arm-none-eabi-as"],
+    srcs = ["bin/x86_64-linux-as"],
 )
 
 filegroup(
     name = "cpp",
-    srcs = ["bin/arm-none-eabi-cpp"],
+    srcs = ["bin/x86_64-linux-cpp"],
 )
 
 filegroup(
     name = "gcc",
-    srcs = ["bin/arm-none-eabi-gcc"],
+    srcs = ["bin/x86_64-linux-gcc"],
 )
 
 filegroup(
     name = "gcov",
-    srcs = ["bin/arm-none-eabi-gcov"],
+    srcs = ["bin/x86_64-linux-gcov"],
 )
 
 filegroup(
     name = "ld",
-    srcs = ["bin/arm-none-eabi-ld"],
+    srcs = ["bin/x86_64-linux-ld"],
 )
 
 filegroup(
     name = "nm",
-    srcs = ["bin/arm-none-eabi-nm"],
+    srcs = ["bin/x86_64-linux-nm"],
 )
 
 filegroup(
     name = "objcopy",
-    srcs = ["bin/arm-none-eabi-objcopy"],
+    srcs = ["bin/x86_64-linux-objcopy"],
 )
 
 filegroup(
     name = "objdump",
-    srcs = ["bin/arm-none-eabi-objdump"],
+    srcs = ["bin/x86_64-linux-objdump"],
 )
 
 filegroup(
     name = "strip",
-    srcs = ["bin/arm-none-eabi-strip"],
+    srcs = ["bin/x86_64-linux-strip"],
 )
 
 filegroup(
     name = "compiler_pieces",
     srcs = glob([
-        "arm-none-eabi/**",
-        "lib/gcc/arm-none-eabi/**",
+        "x86_64-buildroot-linux-gnu/**",
+        "lib/gcc/x86_64-buildroot-linux-gnu/**",
     ]),
 )
 
