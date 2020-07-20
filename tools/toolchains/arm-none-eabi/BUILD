@@ -1,5 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_toolchain")
-load("//toolchain:config.bzl", "cc_arm_none_eabi_config")
+load("//tools/toolchains:config.bzl", "cc_arm_none_eabi_config")
 
 package(default_visibility = ["//visibility:public"])
 

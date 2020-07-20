@@ -10,16 +10,16 @@ platform(
 
 cc_toolchain(
     name = "cc_toolchain_arm_none_eabi",
-    all_files = "//toolchain/arm-none-eabi:all_files",
-    ar_files = "//toolchain/arm-none-eabi:ar_files",
-    as_files = "//toolchain/arm-none-eabi:as_files",
-    compiler_files = "//toolchain/arm-none-eabi:compiler_files",
+    all_files = "//tools/toolchains/arm-none-eabi:all_files",
+    ar_files = "//tools/toolchains/arm-none-eabi:ar_files",
+    as_files = "//tools/toolchains/arm-none-eabi:as_files",
+    compiler_files = "//tools/toolchains/arm-none-eabi:compiler_files",
     dwp_files = ":empty",
-    linker_files = "//toolchain/arm-none-eabi:linker_files",
-    objcopy_files = "//toolchain/arm-none-eabi:objcopy_files",
-    strip_files = "//toolchain/arm-none-eabi:strip_files",
+    linker_files = "//tools/toolchains/arm-none-eabi:linker_files",
+    objcopy_files = "//tools/toolchains/arm-none-eabi:objcopy_files",
+    strip_files = "//tools/toolchains/arm-none-eabi:strip_files",
     supports_param_files = 0,
-    toolchain_config = "//toolchain/arm-none-eabi:config",
+    toolchain_config = "//tools/toolchains/arm-none-eabi:config",
     toolchain_identifier = "arm_none_eabi",
 )
 

@@ -1,4 +1,4 @@
-load("//toolchain:usb_boot.bzl", "usb_boot")
+load("//tools:usb_boot.bzl", "usb_boot")
 
 usb_boot(
     name = "usb_deploy",

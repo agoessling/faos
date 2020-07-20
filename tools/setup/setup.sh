@@ -5,7 +5,7 @@ set -e
 
 # Project root.
 ROOT_PATH=`realpath $0 | xargs dirname`
-ROOT_PATH=`realpath $ROOT_PATH/..`
+ROOT_PATH=`realpath $ROOT_PATH/../..`
 
 RED="\033[0;31m"
 GREEN="\033[0;32m"
@@ -137,12 +137,12 @@ install_usb_boot() {
   sudo apt install -y dnsmasq
 
   # Setup udev to name TI RNDIS device to usb-boot.
-  sudo cp "$ROOT_PATH/install_scripts/99-usb-boot.rules" /etc/udev/rules.d/
+  sudo cp "$ROOT_PATH/tools/setup/99-usb-boot.rules" /etc/udev/rules.d/
   sudo udevadm control --reload-rules
   sudo udevadm trigger
 
   # Setup netplan to give RNDIS usb device a static IP.
-  sudo cp "$ROOT_PATH/install_scripts/99-usb-boot.yaml" /etc/netplan
+  sudo cp "$ROOT_PATH/tools/setup/99-usb-boot.yaml" /etc/netplan
   sudo netplan apply
 }
 
