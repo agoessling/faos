@@ -101,14 +101,14 @@ static TestVector g_test_vectors[] = {
 };
 
 void setUp(void) {
-  for (int32_t i = 0; i < sizeof(g_input_5); ++i) {
+  for (int32_t i = 0; i < (int32_t)sizeof(g_input_5); ++i) {
     g_input_5[i] = i + 1;
     g_output_5[i + 1] = i + 1;
   }
   g_output_5[0] = 0xFF;
   g_output_5[255] = 0x00;
 
-  for (int32_t i = 0; i < sizeof(g_input_6); ++i) {
+  for (int32_t i = 0; i < (int32_t)sizeof(g_input_6); ++i) {
     g_input_6[i] = i;
     g_output_6[i + 1] = i;
   }
@@ -116,7 +116,7 @@ void setUp(void) {
   g_output_6[1] = 0xFF;
   g_output_6[256] = 0x00;
 
-  for (int32_t i = 0; i < sizeof(g_input_7); ++i) {
+  for (int32_t i = 0; i < (int32_t)sizeof(g_input_7); ++i) {
     g_input_7[i] = i + 1;
     g_output_7[i + 1] = i + 1;
   }
@@ -125,7 +125,7 @@ void setUp(void) {
   g_output_7[256] = 0xFF;
   g_output_7[257] = 0x00;
 
-  for (int32_t i = 0; i < sizeof(g_input_8); ++i) {
+  for (int32_t i = 0; i < (int32_t)sizeof(g_input_8); ++i) {
     g_input_8[i] = i + 2;
     g_output_8[i + 1] = i + 2;
   }
@@ -134,7 +134,7 @@ void setUp(void) {
   g_output_8[256] = 0x01;
   g_output_8[257] = 0x00;
 
-  for (int32_t i = 0; i < sizeof(g_input_9); ++i) {
+  for (int32_t i = 0; i < (int32_t)sizeof(g_input_9); ++i) {
     g_input_9[i] = i + 3;
     g_output_9[i + 1] = i + 3;
   }
@@ -146,7 +146,7 @@ void setUp(void) {
 
 void tearDown(void) {}
 
-void TestCobsDecodeByte(void) {
+static void TestCobsDecodeByte(void) {
   {
     CobsState state;
     const int32_t len = 3;
@@ -171,7 +171,7 @@ void TestCobsDecodeByte(void) {
       uint8_t encoded_buffer[] = {0xAA, 0xFF, 0xFF, 0xFF, 0x00};
 
       CobsStatus status;
-      for (int32_t i = 0; i < sizeof(encoded_buffer) - 1; ++i) {
+      for (int32_t i = 0; i < (int32_t)sizeof(encoded_buffer) - 1; ++i) {
         status = CobsDecodeByte(&state, encoded_buffer[i]);
         TEST_ASSERT_EQUAL_INT(kCobsStatusProcessing, status);
       }
@@ -183,7 +183,7 @@ void TestCobsDecodeByte(void) {
       uint8_t decoded_buffer[] = {0xFF, 0xFF, 0xFF};
 
       CobsStatus status;
-      for (int32_t i = 0; i < sizeof(encoded_buffer) - 1; ++i) {
+      for (int32_t i = 0; i < (int32_t)sizeof(encoded_buffer) - 1; ++i) {
         status = CobsDecodeByte(&state, encoded_buffer[i]);
         TEST_ASSERT_EQUAL_INT(kCobsStatusProcessing, status);
       }
@@ -197,7 +197,7 @@ void TestCobsDecodeByte(void) {
       uint8_t decoded_buffer[] = {0xAA, 0xAA};
 
       CobsStatus status;
-      for (int32_t i = 0; i < sizeof(encoded_buffer) - 1; ++i) {
+      for (int32_t i = 0; i < (int32_t)sizeof(encoded_buffer) - 1; ++i) {
         status = CobsDecodeByte(&state, encoded_buffer[i]);
         TEST_ASSERT_EQUAL_INT(kCobsStatusProcessing, status);
       }
@@ -209,7 +209,7 @@ void TestCobsDecodeByte(void) {
   }
 }
 
-void TestCobsDecodeBlock(void) {
+static void TestCobsDecodeBlock(void) {
   {
     uint8_t input[] = {};
     uint8_t output[] = {0x00};
@@ -236,7 +236,7 @@ void TestCobsDecodeBlock(void) {
     TEST_ASSERT_EQUAL_INT(kCobsStatusIncompleteFrame, status);
   }
 
-  for (int32_t i = 0; i < ARRAY_SIZE(g_test_vectors); ++i) {
+  for (int32_t i = 0; i < (int32_t)ARRAY_SIZE(g_test_vectors); ++i) {
     Array input = g_test_vectors[i].input;
     Array output = g_test_vectors[i].output;
     const char *message = g_test_vectors[i].message;
@@ -256,8 +256,8 @@ void TestCobsDecodeBlock(void) {
   }
 }
 
-void TestCobsEncodeBlock(void) {
-  for (int32_t i = 0; i < ARRAY_SIZE(g_test_vectors); ++i) {
+static void TestCobsEncodeBlock(void) {
+  for (int32_t i = 0; i < (int32_t)ARRAY_SIZE(g_test_vectors); ++i) {
     Array input = g_test_vectors[i].input;
     Array output = g_test_vectors[i].output;
     const char *message = g_test_vectors[i].message;
@@ -272,7 +272,7 @@ void TestCobsEncodeBlock(void) {
   }
 }
 
-void TestCobsMaxEncodeLen(void) {
+static void TestCobsMaxEncodeLen(void) {
   TEST_ASSERT_EQUAL_INT32(2, COBS_MAX_ENCODE_LEN(-1));
   TEST_ASSERT_EQUAL_INT32(2, COBS_MAX_ENCODE_LEN(0));
   TEST_ASSERT_EQUAL_INT32(3, COBS_MAX_ENCODE_LEN(1));
@@ -282,7 +282,7 @@ void TestCobsMaxEncodeLen(void) {
   TEST_ASSERT_EQUAL_INT32(513, COBS_MAX_ENCODE_LEN(509));
 }
 
-void TestCobsMaxDecodeLen(void) {
+static void TestCobsMaxDecodeLen(void) {
   TEST_ASSERT_EQUAL_INT32(0, COBS_MAX_DECODE_LEN(-1));
   TEST_ASSERT_EQUAL_INT32(0, COBS_MAX_DECODE_LEN(0));
   TEST_ASSERT_EQUAL_INT32(0, COBS_MAX_DECODE_LEN(1));

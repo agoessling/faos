@@ -10,15 +10,15 @@ static const uint16_t g_data_crc = 0x2189;
 void setUp(void) {}
 void tearDown(void) {}
 
-void TestCrc16Lsb(void) {
+static void TestCrc16Lsb(void) {
   uint16_t crc = Crc16Lsb(g_data, sizeof(g_data), kCrc16LsbPolyCcitt);
   TEST_ASSERT_EQUAL_HEX16(g_data_crc, crc);
 }
 
-void TestCrc16LsbUpdate(void) {
+static void TestCrc16LsbUpdate(void) {
   uint16_t crc = 0;
 
-  for (int32_t i = 0; i < sizeof(g_data); ++i) {
+  for (int32_t i = 0; i < (int32_t)sizeof(g_data); ++i) {
     crc = Crc16LsbUpdate(crc, g_data[i], kCrc16LsbPolyCcitt);
   }
 
