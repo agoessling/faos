@@ -15,6 +15,21 @@ test_suite(
 )
 
 py_binary(
+    name = "message_definition",
+    srcs = ["message_definition.py"],
+    deps = [
+        ":message_pack",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "message_pack",
+    srcs = ["message_pack.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
     name = "generate_reg_def",
     srcs = ["generate_reg_def.py"],
     deps = [
